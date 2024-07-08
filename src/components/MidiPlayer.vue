@@ -1,7 +1,7 @@
 <template>
     <div class="hello">
        
-
+      <button @click="playSong"> Play</button>
     </div>
 </template>
 
@@ -49,7 +49,10 @@ const loadAndPlayMidi = async (midiUrl: string, soundFontName: string) => {
 const midiFileUrl = 'public/midi/Oppressed.mid'; // Replace with your MIDI file URL
 const soundFontName = 'electric_piano_1'; // Replace with your SoundFont name
 
-loadAndPlayMidi(midiFileUrl, soundFontName);
+function playSong () {
+  loadAndPlayMidi(midiFileUrl, soundFontName);
+
+}
 
 
 </script>

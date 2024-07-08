@@ -1,9 +1,9 @@
 @import './base.css';
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  min-width:100%;
+  margin: 0;
+  padding: 0rem;
   font-weight: normal;
 }
 
@@ -29,7 +29,9 @@ a,
 
   #app {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 0 0rem;
+    
   }
 }

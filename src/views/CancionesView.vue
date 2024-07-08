@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import TheWelcome from '../components/TheWelcome.vue'
 import MidiPlayer from '../components/MidiPlayer.vue'
+
+const songIsPlaying = ref(false)
 </script>
 <template>
     <div class="about">
       <h1>This is the Canciones Page</h1>
-      <MidiPlayer />
+      <MidiPlayer v-if="songIsPlaying" />
     </div>
   </template>
   
