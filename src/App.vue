@@ -1,30 +1,71 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { ref } from 'vue';
+import { Icon } from '@iconify/vue';
+import MidiPlayer from './components/MidiPlayer.vue';
+import MidiConverter from './components/MidiConverter.vue'
+const songIsPlaying = ref(false)
+const currentPlayingId = ref<number | null>(null);
+const songApp = ref()
+const playSong = (song: {
+  id: number,
+  nombre: string,
+  genero: string,
+  tempo: string
+}) => {
+  songApp.value = song;
+  if (currentPlayingId.value === song.id && songIsPlaying.value == true) {
+    // If the song is already playing, pause it
+    console.log(`Pausing song with id: ${song.id}`);
+
+    songIsPlaying.value = false;
+  } else if (currentPlayingId.value === song.id && songIsPlaying.value == false) {
+    // If the song is already playing, pause it
+    console.log(`Playing song with id: ${song.id}`);
+
+    songIsPlaying.value = true;
+  } else {
+    // Play the new song and pause the current one
+    console.log(`Playing song with id: ${song.id}`);
+    currentPlayingId.value = song.id;
+    songIsPlaying.value = true;
+  }
+};
+function resumeOrPauseSong() {
+  console.log('Song Resumed!')
+  songIsPlaying.value = !songIsPlaying.value;
+}
 </script>
 
 <template>
 
 
-  <RouterView />
+  <RouterView @playSong="playSong" />
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
+    <MidiPlayer v-if="songIsPlaying && songApp" :song="songApp" />
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+      <Icon v-if='!songIsPlaying' @click="resumeOrPauseSong" icon="carbon:play-outline" width="44" height="44"></Icon>
+      <Icon v-else @click="resumeOrPauseSong" icon="material-symbols:pause" width="44" height="44"></Icon>
+      <h1>{{ currentPlayingId }}</h1>
+      <h1>{{ songApp?.nombre }}</h1>
     </div>
   </header>
 </template>
 
 <style scoped>
+.wrapper {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-items: center;
+}
+
 header {
   line-height: 1.5;
-  max-height: 100vh;
+  height: 12vh;
+  width: 100vw;
+  background-color: black;
 }
 
 .logo {
@@ -60,7 +101,7 @@ nav a:first-of-type {
 @media (min-width: 1024px) {
   header {
     display: flex;
-    place-items: center;
+
     padding-right: calc(var(--section-gap) / 2);
   }
 
@@ -70,7 +111,7 @@ nav a:first-of-type {
 
   header .wrapper {
     display: flex;
-    place-items: flex-start;
+
     flex-wrap: wrap;
   }
 

@@ -1,28 +1,72 @@
 <script setup lang="ts">
 import TheWelcome from '../components/TheWelcome.vue'
+import { ref } from 'vue';
+import * as yup from 'yup';
+import { Icon } from '@iconify/vue';
+import router from '@/router';
+// Define YUP validation schema
+const schema = yup.object().shape({
+  username: yup.string().required('Username is required'),
+  password: yup.string().required('Password is required')
+});
 
+// Form data
+const username = ref('');
+const password = ref('');
+const valid = ref(false);
+const errors = ref<{ username?: string; password?: string }>({});
+
+// Define validation rules
+const usernameRules = [
+  (v: any) => !!v || 'Username is required'
+];
+const passwordRules = [
+  (v: any) => !!v || 'Password is required'
+];
+
+// Validate form
+const validateForm = async () => {
+  try {
+    await schema.validate({ username: username.value, password: password.value }, { abortEarly: false });
+    errors.value = {};
+    alert('Validation succeeded');
+    router.push('/canciones')
+  } catch (err) {
+    if (err instanceof yup.ValidationError) {
+
+      errors.value = err.inner.reduce((acc: any, error: yup.ValidationError) => {
+        acc[error.path!] = error.message;
+        return acc;
+      }, {});
+    }
+  }
+};
 </script>
 <template>
   <div class="login">
     <div class="card-login">
 
     </div>
-    <v-card class="mx-auto" prepend-icon="$vuetify" width="400">
-
-
+    <v-card class="mx-auto rounded-lg" width="400">
       <v-card-text style="" class="body-container  pt-4">
 
-        <v-form v-model="valid">
+        <v-form ref="form" v-model="valid" @submit.prevent="validateForm">
           <v-container>
             <v-col>
+              <Icon icon="iconamoon:profile" width="110" height="110" />
+
               <v-row class="v-row">
                 <h1 class="h1">
                   Usuario
                 </h1>
               </v-row>
               <v-row cols="12" md="4">
-                <v-text-field v-model="firstname" :counter="10" :rules="nameRules" label="First name" hide-details
+                <v-text-field v-model="username" :rules="usernameRules" label="First name" hide-details
                   required></v-text-field>
+
+              </v-row>
+              <v-row cols="12" md="4">
+                <span v-if="errors.username" class="error-message">{{ errors.username }}</span>
               </v-row>
               <v-row class="v-row">
                 <h1 class="h1">
@@ -30,11 +74,18 @@ import TheWelcome from '../components/TheWelcome.vue'
                 </h1>
               </v-row>
               <v-row cols="12" md="4">
-                <v-text-field v-model="lastname" :counter="10" :rules="nameRules" label="Contraseña" hide-details
+                <v-text-field v-model="password" :rules="passwordRules" label="Contraseña" type="password" hide-details
                   required></v-text-field>
+
               </v-row>
               <v-row cols="12" md="4">
-                <v-btn color="success">a</v-btn>
+                <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
+              </v-row>
+              <v-row cols="12" md="4">
+                <v-btn class="mt-3" color="success" @click="validateForm">Enviar</v-btn>
+              </v-row>
+              <v-row cols="12" md="4">
+                <RouterLink class="mt-1" to="/register">¿No tienes cuenta? Registrate aqui</RouterLink>
               </v-row>
 
             </v-col>
@@ -59,7 +110,7 @@ import TheWelcome from '../components/TheWelcome.vue'
 .body-container {
   text-align: center;
   background: rgb(43, 43, 43);
-  background: linear-gradient(180deg, rgb(29, 29, 29) 0%, rgba(0, 0, 0, 1) 100%);
+  background: linear-gradient(180deg, rgb(19, 19, 19) 0%, rgba(0, 0, 0, 1) 100%);
 }
 
 .login {
