@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import { ref } from 'vue';
-
+import rawSongs from '../assets/data/songs.json'
 import TdCanciones from '../components/TdCanciones.vue'
 
 const emit = defineEmits<{
@@ -13,7 +13,7 @@ const emit = defineEmits<{
   }): void
 }>();
 
-const songs = ref([{ id: 1, nombre: 'Cancion1', genero: 'Rock', tempo: '150 BPM' }, { id: 2, nombre: 'Cancion2', genero: 'Rock', tempo: '150 BPM' }])
+const songs = ref(rawSongs)
 function playSong(idSong: number) {
   emit('playSong', songs.value.find(s => s.id === idSong))
 }
@@ -72,13 +72,10 @@ function playSong(idSong: number) {
 }
 
 .canciones {
-  width: 100vw;
+  width: 100%;
   height: 88vh;
   display: flex;
   flex-direction: column;
-
-
-
   background: rgb(43, 43, 43);
   background: linear-gradient(200deg, #0029FF, #00168B);
 }

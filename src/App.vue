@@ -1,52 +1,73 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView, useRoute } from 'vue-router'
 import { ref } from 'vue';
 import { Icon } from '@iconify/vue';
 import MidiPlayer from './components/MidiPlayer.vue';
 import MidiConverter from './components/MidiConverter.vue'
+const route = useRoute()
 const songIsPlaying = ref(false)
 const currentPlayingId = ref<number | null>(null);
 const songApp = ref()
+
 const playSong = (song: {
-  id: number,
-  nombre: string,
-  genero: string,
-  tempo: string
+  id: number, nombre: string, genero: string, tempo: string
 }) => {
   songApp.value = song;
-  if (currentPlayingId.value === song.id && songIsPlaying.value == true) {
-    // If the song is already playing, pause it
-    console.log(`Pausing song with id: ${song.id}`);
+  if (songApp.value) {
+    if (currentPlayingId.value === song.id && songIsPlaying.value == true) {
+      // If the song is already playing, pause it
+      console.log(`Pausing song with id: ${song.id}`);
 
-    songIsPlaying.value = false;
-  } else if (currentPlayingId.value === song.id && songIsPlaying.value == false) {
-    // If the song is already playing, pause it
-    console.log(`Playing song with id: ${song.id}`);
+      songIsPlaying.value = false;
+    } else if (currentPlayingId.value === song.id && songIsPlaying.value == false) {
+      // If the song is already playing, pause it
+      console.log(`Playing song with id: ${song.id}`);
 
-    songIsPlaying.value = true;
-  } else {
-    // Play the new song and pause the current one
-    console.log(`Playing song with id: ${song.id}`);
-    currentPlayingId.value = song.id;
-    songIsPlaying.value = true;
+      songIsPlaying.value = true;
+    } else {
+      // Play the new song and pause the current one
+      console.log(`Playing song with id: ${song.id}`);
+      currentPlayingId.value = song.id;
+      songIsPlaying.value = true;
+    }
   }
 };
+
 function resumeOrPauseSong() {
-  console.log('Song Resumed!')
-  songIsPlaying.value = !songIsPlaying.value;
+  if (songApp.value) {
+    console.log('Song Resumed!')
+    songIsPlaying.value = !songIsPlaying.value;
+  }
 }
+
 </script>
 
 <template>
 
+  <div class="main-component">
+    <div v-if="route.path != '/login'" class="collum-container">
+      <div class="top-section">
+        <Icon class="icon mt-5" icon="iconamoon:profile" width="70" height="70" />
+        <p class="mt-5 px-3">¡Bienvenido Agustín!</p>
+        <div class="cerrar-container mt-5">
+          <Icon icon="bitcoin-icons:exit-outline" width="30" height="30" style="color: white" />
+          <p>Cerrar Sesion</p>
+        </div>
+      </div>
+      <div class="bottom-section">
 
-  <RouterView @playSong="playSong" />
-  <header>
+        <h2 class="song-title">{{ songApp?.nombre }}</h2>
+        <Icon class="song-icon my-5" icon="entypo:note" width="92" height="92" style="color: white" />
+      </div>
+    </div>
+    <RouterView @playSong="playSong" />
+  </div>
 
+  <header class="header" v-if="route.path != '/login'">
     <MidiPlayer v-if="songIsPlaying && songApp" :song="songApp" />
-    <div class="wrapper">
-      <Icon v-if='!songIsPlaying' @click="resumeOrPauseSong" icon="carbon:play-outline" width="44" height="44"></Icon>
-      <Icon v-else @click="resumeOrPauseSong" icon="material-symbols:pause" width="44" height="44"></Icon>
+    <div class="wrapper ml-5">
+      <Icon v-if='!songIsPlaying' @click="resumeOrPauseSong" icon="carbon:play-outline" width="60" height="60"></Icon>
+      <Icon v-else @click="resumeOrPauseSong" icon="material-symbols:pause" width="60" height="60"></Icon>
       <h1>{{ currentPlayingId }}</h1>
       <h1>{{ songApp?.nombre }}</h1>
     </div>
@@ -54,6 +75,65 @@ function resumeOrPauseSong() {
 </template>
 
 <style scoped>
+.header {
+  width: 100%;
+}
+
+.collum-container {
+  display: flex;
+  flex-direction: column;
+
+  min-height: 100%;
+}
+
+.top-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.bottom-section {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-direction: column;
+}
+
+.song-icon {
+  justify-self: end;
+}
+
+.song-title {
+  justify-self: end;
+}
+
+.cerrar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {}
+
+.collum-container {
+  background-color: #08080881;
+
+  color: #fff;
+  width: 12vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.main-component {
+  display: flex;
+  background: rgb(43, 43, 43);
+  background: linear-gradient(200deg, #0029FF, #00168B);
+  width: 100vw;
+}
+
 .wrapper {
   height: 100%;
   display: flex;

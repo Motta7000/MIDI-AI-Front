@@ -7,7 +7,8 @@ const props = defineProps<{
     id: number,
     nombre: string,
     genero: string,
-    tempo: string
+    tempo: string,
+    midi: string
   }
 }>();
 console.log(props)
@@ -20,10 +21,7 @@ const Player = new MidiPlayer.Player(function (event) {
 // Function to load MIDI file from URL and play
 const loadAndPlayMidi = async (midiUrl: string, soundFontName: string) => {
   try {
-    // Load MIDI file
-    const response = await fetch(midiUrl);
-    const midiData = await response.arrayBuffer();
-    const byteArray = new Uint8Array(midiData);
+
 
     // Load SoundFont and create instrument
     const audioContext = new AudioContext();
@@ -40,7 +38,9 @@ const loadAndPlayMidi = async (midiUrl: string, soundFontName: string) => {
     });
 
     // Load MIDI data and play
-    Player.loadDataUri('data:audio/midi;base64,' + btoa(String.fromCharCode.apply(null, Array.from(byteArray))));
+    //  Player.loadDataUri('data:audio/midi;base64,' + btoa(String.fromCharCode.apply(null, Array.from(byteArray))));
+    console.log(props.song.midi)
+    Player.loadDataUri(props.song.midi)
     Player.play();
   } catch (error) {
     console.error('Error loading MIDI file or SoundFont:', error);
@@ -50,7 +50,7 @@ const loadAndPlayMidi = async (midiUrl: string, soundFontName: string) => {
 // Example usage: load MIDI file and SoundFont
 const midiFileUrl = 'public/midi/Oppressed.mid'; // Replace with your MIDI file URL
 const soundFontName = 'electric_piano_1'; // Replace with your SoundFont name
-
+playSong()
 function playSong() {
   console.log('Play song')
   loadAndPlayMidi(midiFileUrl, soundFontName);
@@ -60,7 +60,7 @@ function playSong() {
 <template>
   <div class="hello">
 
-    <button @click="playSong"> Play</button>
+
   </div>
 </template>
 
