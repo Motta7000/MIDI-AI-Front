@@ -1,7 +1,9 @@
 <script setup lang="ts">
+import { ref, onMounted, watch, onBeforeMount } from 'vue';
 import MidiPlayer from 'midi-player-js';
 import Soundfont from 'soundfont-player';
-import { defineProps } from 'vue';
+import { defineProps, defineEmits } from 'vue';
+
 const props = defineProps<{
   song: {
     id: number,
@@ -9,62 +11,88 @@ const props = defineProps<{
     genero: string,
     tempo: string,
     midi: string
-  }
+  },
+  songIsPlaying: boolean
 }>();
-console.log(props)
-// Initialize MIDI player
-const Player = new MidiPlayer.Player(function (event) {
-  console.log(event); // Log MIDI events
+console.log(props.songIsPlaying)
+const emits = defineEmits(['playerReady']);
 
-});
+const player = ref<MidiPlayer.Player | null>(null);
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const soundFont = ref<Soundfont.Player | null>(null);
 
-// Function to load MIDI file from URL and play
 const loadAndPlayMidi = async (midiUrl: string, soundFontName: string) => {
   try {
+    if (player.value) {
+      player.value.stop();
+    }
 
+    player.value = new MidiPlayer.Player(function (event) {
+      //console.log(event); // Log MIDI events
+    });
 
-    // Load SoundFont and create instrument
-    const audioContext = new AudioContext();
-    const soundFont = await Soundfont.instrument(audioContext, soundFontName);
+    soundFont.value = await Soundfont.instrument(audioContext, soundFontName);
 
-    // Function to handle MIDI events and trigger sound
-    Player.on('midiEvent', (event: any) => {
-      console.log(event)
-      if (event.name === 'Note on') {
-        soundFont.play(event.noteNumber, audioContext.currentTime, { duration: event.deltaTime / 1000 });
-      } else if (event.name === 'Note off') {
-        soundFont.stop(event.noteNumber, audioContext.currentTime);
+    player.value.on('midiEvent', (event: any) => {
+      if (event.name === 'Note on' && event.velocity > 0) {
+        soundFont.value?.play(event.noteNumber, audioContext.currentTime, { duration: event.deltaTime / 1000 });
+      } else if (event.name === 'Note off' || (event.name === 'Note on' && event.velocity === 0)) {
+        // Handle Note off events or Note on events with velocity 0
+        // You might want to stop the note here if your soundfont library supports it
       }
     });
 
-    // Load MIDI data and play
-    //  Player.loadDataUri('data:audio/midi;base64,' + btoa(String.fromCharCode.apply(null, Array.from(byteArray))));
-    console.log(props.song.midi)
-    Player.loadDataUri(props.song.midi)
-    Player.play();
+    console.log(props.song.midi);
+
+    player.value.stop();
+    player.value.loadDataUri(props.song.midi);
+    player.value.play();
+
+    emits('playerReady', player.value); // Emit playerReady event
   } catch (error) {
     console.error('Error loading MIDI file or SoundFont:', error);
   }
 };
+onBeforeMount(() => {
+  if (player.value) {
+    player.value.stop();
+  }
+});
+watch(() => props.songIsPlaying, (newValue) => {
+
+  console.log(newValue)
+  if (player.value) {
+    if (newValue == true) {
+      player.value.play();
+    } else {
+      player.value.pause();
+    }
+  }
+});
+watch(() => props.song, (newValue) => {
+  console.log('*********************************************')
+  console.log(newValue)
+  props.song.midi = newValue.midi
+
+  loadAndPlayMidi(midiFileUrl, soundFontName);
+});
 
 // Example usage: load MIDI file and SoundFont
 const midiFileUrl = 'public/midi/Oppressed.mid'; // Replace with your MIDI file URL
 const soundFontName = 'electric_piano_1'; // Replace with your SoundFont name
-playSong()
-function playSong() {
-  console.log('Play song')
+onMounted(() => {
+  if (player.value)
+    player.value.stop();
   loadAndPlayMidi(midiFileUrl, soundFontName);
-}
+});
 </script>
 
 <template>
   <div class="hello">
-
-
+    <!-- Child component template content -->
   </div>
 </template>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;

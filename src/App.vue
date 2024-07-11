@@ -64,12 +64,12 @@ function resumeOrPauseSong() {
   </div>
 
   <header class="header" v-if="route.path != '/login'">
-    <MidiPlayer v-if="songIsPlaying && songApp" :song="songApp" />
+    <MidiPlayer @playerReady="onPlayerReady" v-if="songApp" :song="songApp" :songIsPlaying="songIsPlaying" />
     <div class="wrapper ml-5">
-      <Icon v-if='!songIsPlaying' @click="resumeOrPauseSong" icon="carbon:play-outline" width="60" height="60"></Icon>
-      <Icon v-else @click="resumeOrPauseSong" icon="material-symbols:pause" width="60" height="60"></Icon>
-      <h1>{{ currentPlayingId }}</h1>
-      <h1>{{ songApp?.nombre }}</h1>
+      <Icon v-if='!songIsPlaying' @click="resumeOrPauseSong();" icon="carbon:play-outline" width="60" height="60">
+      </Icon>
+      <Icon v-else @click="resumeOrPauseSong();" icon="material-symbols:pause" width="60" height="60">
+      </Icon>
     </div>
   </header>
 </template>
@@ -77,6 +77,7 @@ function resumeOrPauseSong() {
 <style scoped>
 .header {
   width: 100%;
+
 }
 
 .collum-container {
@@ -132,6 +133,7 @@ function resumeOrPauseSong() {
   background: rgb(43, 43, 43);
   background: linear-gradient(200deg, #0029FF, #00168B);
   width: 100vw;
+  height: 90vh;
 }
 
 .wrapper {
