@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router'
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 import MidiPlayer from './components/MidiPlayer.vue';
 import MidiConverter from './components/MidiConverter.vue'
+import { useUserStore } from '@/stores/counter'
+import router from './router';
+
+const userStore = useUserStore(); // Access the user store
+
+const storedUsername = computed(() => userStore.username);
 const route = useRoute()
 const songIsPlaying = ref(false)
 const currentPlayingId = ref<number | null>(null);
@@ -39,17 +45,19 @@ function resumeOrPauseSong() {
     songIsPlaying.value = !songIsPlaying.value;
   }
 }
-
+function logOut() {
+  router.push('/login')
+}
 </script>
 
 <template>
 
   <div class="main-component">
-    <div v-if="route.path != '/login'" class="collum-container">
+    <div v-if="route.path != '/login' && route.path != '/register'" class="collum-container">
       <div class="top-section">
         <Icon class="icon mt-5" icon="iconamoon:profile" width="70" height="70" />
-        <p class="mt-5 px-3">¡Bienvenido Agustín!</p>
-        <div class="cerrar-container mt-5">
+        <p class="mt-5 px-3">¡Bienvenido {{ storedUsername }}!</p>
+        <div @click="logOut()" class="cerrar-container mt-5">
           <Icon icon="bitcoin-icons:exit-outline" width="30" height="30" style="color: white" />
           <p>Cerrar Sesion</p>
         </div>
@@ -63,7 +71,7 @@ function resumeOrPauseSong() {
     <RouterView @playSong="playSong" />
   </div>
 
-  <header class="header" v-if="route.path != '/login'">
+  <header class="header" v-if="route.path != '/login' && route.path != '/register'">
     <MidiPlayer @playerReady="onPlayerReady" v-if="songApp" :song="songApp" :songIsPlaying="songIsPlaying" />
     <div class="wrapper ml-5">
       <Icon v-if='!songIsPlaying' @click="resumeOrPauseSong();" icon="carbon:play-outline" width="60" height="60">
@@ -110,6 +118,16 @@ function resumeOrPauseSong() {
 }
 
 .cerrar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.5s all;
+  user-select: none;
+}
+
+.cerrar-container:hover {
+  transform: scale(1.05);
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;

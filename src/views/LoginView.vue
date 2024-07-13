@@ -4,12 +4,14 @@ import { ref } from 'vue';
 import * as yup from 'yup';
 import { Icon } from '@iconify/vue';
 import router from '@/router';
+import { useUserStore } from '@/stores/counter'
+
 // Define YUP validation schema
 const schema = yup.object().shape({
   username: yup.string().required('Username is required'),
   password: yup.string().required('Password is required')
 });
-
+const userStore = useUserStore();
 // Form data
 const username = ref('');
 const password = ref('');
@@ -29,7 +31,8 @@ const validateForm = async () => {
   try {
     await schema.validate({ username: username.value, password: password.value }, { abortEarly: false });
     errors.value = {};
-    alert('Validation succeeded');
+
+    userStore.setUsername(username.value); // Save the username in the store
     router.push('/canciones')
   } catch (err) {
     if (err instanceof yup.ValidationError) {

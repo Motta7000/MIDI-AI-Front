@@ -1,12 +1,18 @@
-import { ref, computed } from 'vue'
+// stores/user.ts
+import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
-export const useCounterStore = defineStore('counter', () => {
-  const count = ref(0)
-  const doubleCount = computed(() => count.value * 2)
-  function increment() {
-    count.value++
+export const useUserStore = defineStore('user', () => {
+  const username = ref('')
+
+  function setUsername(newUsername: string) {
+    username.value = newUsername
   }
 
-  return { count, doubleCount, increment }
+  return { username, setUsername }
+}, {
+  persist: {
+    key: 'user-store',
+    storage: localStorage, // or sessionStorage for session-based persistence
+  }
 })
