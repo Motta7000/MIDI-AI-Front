@@ -3,6 +3,7 @@
 import { ref } from 'vue';
 import rawSongs from '../assets/data/songs.json'
 import TdCanciones from '../components/TdCanciones.vue'
+import router from '@/router';
 
 const emit = defineEmits<{
   (e: 'playSong', song: {
@@ -23,7 +24,7 @@ function playSong(idSong: number) {
 
     <div class="body-container ">
       <h1 class="h1 pt-5">Canciones</h1>
-      <v-btn class="my-3 button" color="success" @click="">+ Generar canciones</v-btn>
+      <v-btn class="my-3 button" color="success" @click="router.push('/generar')">+ Generar canciones</v-btn>
       <v-table density="compact">
         <thead>
           <tr>

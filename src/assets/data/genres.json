@@ -1,0 +1,18 @@
+[
+    {
+      "id": 1,
+      "nombre": "Rock"
+    },
+    {
+      "id": 2,
+      "nombre":"Pop"
+    },
+    {
+      "id": 2,
+      "nombre":"Musica Clasica"
+    },
+    {
+      "id": 2,
+      "nombre":"Funk"
+    }
+  ]

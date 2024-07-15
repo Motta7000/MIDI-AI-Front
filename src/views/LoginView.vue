@@ -7,6 +7,7 @@ import router from '@/router';
 import { useUserStore } from '@/stores/counter'
 
 // Define YUP validation schema
+const show1 = ref(false)
 const schema = yup.object().shape({
   username: yup.string().required('Username is required'),
   password: yup.string().required('Password is required')
@@ -77,8 +78,12 @@ const validateForm = async () => {
                 </h1>
               </v-row>
               <v-row cols="12" md="4">
-                <v-text-field v-model="password" :rules="passwordRules" label="Contraseña" type="password" hide-details
-                  required></v-text-field>
+
+                <v-text-field v-model="password" :append-icon="show1 ? 'iconamoon:profile' : 'iconamoon:profile'"
+                  :rules="passwordRules" :type="show1 ? 'text' : 'password'" hint="At least 8 characters"
+                  label="Password" name="input-10-1" counter @click:append="show1 = !show1">
+                </v-text-field>
+
 
               </v-row>
               <v-row cols="12" md="4">
