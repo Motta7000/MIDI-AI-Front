@@ -57,6 +57,7 @@ const filteredGenres = computed(() => {
 
 .v-text-field {
   height: 0.5rem;
+
 }
 
 .search-container {
