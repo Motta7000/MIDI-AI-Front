@@ -23,6 +23,8 @@ const filteredGenres = computed(() => {
         <RouterLink to="/canciones">Canciones</RouterLink> -> Generar Cancion
       </p>
       <h1 class="h1">Generar Cancion</h1>
+      <h1 class="h1"></h1>
+      <h1 class="h1"></h1>
     </div>
     <div class="body-container">
       <div class="search-container">

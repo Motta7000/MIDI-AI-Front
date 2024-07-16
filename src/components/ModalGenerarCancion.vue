@@ -12,11 +12,11 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'playSong', id: number): void
 }>();
-
+const dialogVisible = ref(false)
 
 </script>
 <template>
-    <v-card @click="openDialog">
+    <v-card class="v-card" @click="dialogVisible = true">
         <v-card-item>
             <v-card-title>
                 {{ props.genre.nombre }}
@@ -30,21 +30,35 @@ const emit = defineEmits<{
         </v-card-text>
     </v-card>
 
-    <v-dialog v-model="dialogVisible" max-width="500">
+    <v-dialog class="v-dialog" v-model="dialogVisible" max-width="500">
         <v-card>
             <v-card-title>
-                {{ selectedGenre?.nombre }}
+                Generar Cancion de {{ props.genre.nombre }}
             </v-card-title>
             <v-card-text>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-                dolore magna aliqua.
+                BPM
             </v-card-text>
+            <v-col>
+                <v-text-field v-model="username" :rules="usernameRules" label="BPM" hide-details
+                    required></v-text-field>
+            </v-col>
+
+
+
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn text @click="dialogVisible = false">Close Dialog</v-btn>
+                <v-btn @click="dialogVisible = false">Close Dialog</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
 </template>
 
-<style scoped></style>
+<style scoped>
+.v-dialog {
+    transform: none;
+}
+
+.v-dialog:hover {
+    transform: none;
+}
+</style>
