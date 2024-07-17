@@ -1,6 +1,7 @@
 <script setup lang="ts">
+
 import { RouterLink, RouterView, useRoute } from 'vue-router'
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { Icon } from '@iconify/vue';
 import MidiPlayer from './components/MidiPlayer.vue';
 import MidiConverter from './components/MidiConverter.vue'
@@ -41,13 +42,22 @@ const playSong = (song: {
 
 function resumeOrPauseSong() {
   if (songApp.value) {
-    console.log('Song Resumed!')
+    console.log('Song inverted!')
     songIsPlaying.value = !songIsPlaying.value;
   }
 }
 function logOut() {
   router.push('/login')
 }
+
+watch(() => route.path, (newPath) => {
+  console.log('Route change detected')
+  console.log(newPath)
+  if (newPath === '/login' || newPath === '/register') {
+    songIsPlaying.value = false;
+    console.log('SOngisplaying = false')
+  }
+});
 </script>
 
 <template>
@@ -70,9 +80,9 @@ function logOut() {
     </div>
     <RouterView @playSong="playSong" />
   </div>
-
+  <MidiPlayer @playerReady="onPlayerReady" v-if="songApp" :song="songApp" :songIsPlaying="songIsPlaying" />
   <header class="header" v-if="route.path != '/login' && route.path != '/register'">
-    <MidiPlayer @playerReady="onPlayerReady" v-if="songApp" :song="songApp" :songIsPlaying="songIsPlaying" />
+
     <div class="wrapper ml-5">
       <Icon v-if='!songIsPlaying' @click="resumeOrPauseSong();" icon="carbon:play-outline" width="60" height="60">
       </Icon>

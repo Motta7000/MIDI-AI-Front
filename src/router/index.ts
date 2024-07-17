@@ -8,7 +8,11 @@ import GenerarView from '../views/GenerarView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
-  routes: [
+  routes: [    
+    {
+    path: '/:catchAll(.*)', // Match any unmatched routes
+    redirect: '/' // Redirect to the home route
+  },
     {
       path: '/',
       redirect:'/login'

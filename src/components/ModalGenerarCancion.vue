@@ -1,6 +1,17 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { defineProps, defineEmits } from 'vue';
+import * as yup from 'yup';
+import { useForm } from 'vee-validate';
+
+const { values, errors, handleSubmit, defineField } =
+    useForm({
+        validationSchema: yup.object({
+            // usuario: yup.string().eusuario().required(),
+            bpm: yup.number().typeError("Ingresar un numero").moreThan(0, 'El número debe ser mayor que 0').required('Ingresar bpm'),
+        })
+    })
+const [bpm, bpmAttrs] = defineField('bpm')
 
 const props = defineProps<{
     genre: {
@@ -31,34 +42,43 @@ const dialogVisible = ref(false)
     </v-card>
 
     <v-dialog class="v-dialog" v-model="dialogVisible" max-width="500">
-        <v-card class="flex-container">
-            <v-card-title>
+        <v-card class="flex-container" min-height="300">
+
+            <v-card-title class="v-card-title">
                 Generar Cancion de {{ props.genre.nombre }}
             </v-card-title>
-            <v-card-text>
-                BPM
-            </v-card-text>
-            <v-col cols="12" md="4" sm="6">
-                <v-text-field class="v-text-field" v-model="username" :rules="usernameRules" label="BPM" hide-details
+
+            <v-col class="v-col pt-5" cols="12" md="8" sm="6">
+                <v-text-field class="v-text-field" v-model="bpm" :rules="usernameRules" label="BPM" hide-details
                     required></v-text-field>
-                <v-btn @click="dialogVisible = false">Crear</v-btn>
+                <v-card-text class="error-text">{{ errors.bpm }} </v-card-text>
+
             </v-col>
-
-
-
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn @click="dialogVisible = false">Crear</v-btn>
+                <v-btn @click="dialogVisible = false">Generar</v-btn>
             </v-card-actions>
+
+
         </v-card>
     </v-dialog>
 </template>
 
 <style scoped>
+.v-col {}
+
+.error-text {
+    color: rgb(255, 0, 0);
+}
+
+.v-card-title {
+    font-size: 25px;
+}
+
 .flex-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
 }
 
