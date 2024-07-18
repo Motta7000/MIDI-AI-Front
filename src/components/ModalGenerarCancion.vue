@@ -3,7 +3,9 @@ import { ref } from 'vue';
 import { defineProps, defineEmits } from 'vue';
 import * as yup from 'yup';
 import { useForm } from 'vee-validate';
+import { toast, type ToastOptions } from 'vue3-toastify';
 
+toast.success('hola')
 const { values, errors, handleSubmit, defineField } =
     useForm({
         validationSchema: yup.object({
