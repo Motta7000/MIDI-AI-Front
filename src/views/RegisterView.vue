@@ -31,6 +31,7 @@ const validateForm = handleSubmit(
     router.push('/login')
     alert('Validation succeeded');
     console.log(username.value, password.value, repeatPassword.value)
+    //Aca iria el fetch
   },
   ({ errors }) => {
     console.log(errors)
@@ -39,7 +40,8 @@ const validateForm = handleSubmit(
 
 onBeforeRouteLeave((to, from, next) => {
   var confirmed = true;
-  if (!formSended && (username.value != '' || password.value != '' || repeatPassword.value != '')) {
+  console.log(username.value, password.value, repeatPassword.value)
+  if (!formSended && (username.value != '' || username.value != undefined || password.value != '' || password.value != undefined || repeatPassword.value != '') && repeatPassword.value != undefined) {
     confirmed = confirm('You have unsaved changes. Are you sure you want to leave?');
   }
   if (confirmed) {
@@ -60,7 +62,7 @@ onBeforeRouteLeave((to, from, next) => {
             <v-col>
               <Icon icon="iconamoon:profile" width="110" height="110" />
               <v-row class="v-row">
-                <h1 class="h1">Usuario {{ values }}</h1>
+                <h1 class="h1">Usuario </h1>
               </v-row>
               <v-row cols="12" md="4">
                 <v-text-field v-model="username" label="Nombre de usuario" hide-details required autocomplete="username"

@@ -14,6 +14,10 @@ const filteredGenres = computed(() => {
     genre.nombre.toLowerCase().includes(search.value!.toLowerCase())
   );
 });
+const emit = defineEmits<{
+
+}>();
+
 </script>
 
 <template>

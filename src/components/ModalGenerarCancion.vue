@@ -4,8 +4,9 @@ import { defineProps, defineEmits } from 'vue';
 import * as yup from 'yup';
 import { useForm } from 'vee-validate';
 import { toast, type ToastOptions } from 'vue3-toastify';
+import router from '@/router';
 
-toast.success('hola')
+
 const { values, errors, handleSubmit, defineField } =
     useForm({
         validationSchema: yup.object({
@@ -23,10 +24,23 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'playSong', id: number): void
+    (e: 'playSong', id: number): void;
+
 }>();
 const dialogVisible = ref(false)
+const onSubmit = handleSubmit(
+    async values => {
+        //Aca iria el fetch
+        dialogVisible.value = false;
+        router.push('/canciones')
+        await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 3 seconds
+        toast.success('La Cancion fue generada exitosamente')
 
+    },
+    ({ errors }) => {
+        console.log(errors)
+    },
+);
 </script>
 <template>
     <v-card class="v-card" @click="dialogVisible = true">
@@ -51,14 +65,14 @@ const dialogVisible = ref(false)
             </v-card-title>
 
             <v-col class="v-col pt-5" cols="12" md="8" sm="6">
-                <v-text-field class="v-text-field" v-model="bpm" :rules="usernameRules" label="BPM" hide-details
+                <v-text-field class="v-text-field" v-model="bpm" :rules="bpmRules" label="BPM" hide-details
                     required></v-text-field>
                 <v-card-text class="error-text">{{ errors.bpm }} </v-card-text>
 
             </v-col>
             <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn @click="dialogVisible = false">Generar</v-btn>
+                <v-btn @click="onSubmit">Generar</v-btn>
             </v-card-actions>
 
 

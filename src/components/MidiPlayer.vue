@@ -15,7 +15,7 @@ const props = defineProps<{
   songIsPlaying: boolean
 }>();
 console.log(props.songIsPlaying)
-const emits = defineEmits(['playerReady']);
+const emits = defineEmits(['playerReady', 'seekTo']);
 
 const player = ref<MidiPlayer.Player | null>(null);
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -84,6 +84,20 @@ onMounted(() => {
   if (player.value)
     player.value.stop();
   loadAndPlayMidi(midiFileUrl, soundFontName);
+});
+
+// Set duration when track is ready
+if (player.value)
+  player.value.on('endOfTrack', () => {
+    const duration = player.value?.getDuration() || 0;
+    emits('updateDuration', duration);
+  });
+;
+
+emits('seekTo', (time: number) => {
+  if (player.value) {
+    player.value.seek(time);
+  }
 });
 </script>
 

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 
 import { RouterLink, RouterView, useRoute } from 'vue-router'
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, defineEmits } from 'vue';
 import { Icon } from '@iconify/vue';
 import MidiPlayer from './components/MidiPlayer.vue';
 import MidiConverter from './components/MidiConverter.vue'
 import { useUserStore } from '@/stores/counter'
 import router from './router';
+import { toast } from 'vue3-toastify';
 
 const userStore = useUserStore(); // Access the user store
 
@@ -58,6 +59,22 @@ watch(() => route.path, (newPath) => {
     console.log('SOngisplaying = false')
   }
 });
+function onSliderChange() {
+  if (songApp.value) {
+    // Emit event to MIDI player component to seek to the new time
+    emits('seekTo', currentTime.value);
+  }
+}
+
+function formatTime(time: number) {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function seekTo() {
+
+}
 </script>
 
 <template>
@@ -80,7 +97,8 @@ watch(() => route.path, (newPath) => {
     </div>
     <RouterView @playSong="playSong" />
   </div>
-  <MidiPlayer @playerReady="onPlayerReady" v-if="songApp" :song="songApp" :songIsPlaying="songIsPlaying" />
+  <MidiPlayer @seekTo="seekTo" @playerReady="onPlayerReady" v-if="songApp" :song="songApp"
+    :songIsPlaying="songIsPlaying" />
   <header class="header" v-if="route.path != '/login' && route.path != '/register'">
 
     <div class="wrapper ml-5">
@@ -88,6 +106,11 @@ watch(() => route.path, (newPath) => {
       </Icon>
       <Icon v-else @click="resumeOrPauseSong();" icon="material-symbols:pause" width="60" height="60">
       </Icon>
+    </div>
+    <!-- Time Slider Controls -->
+    <div class="time-slider-container" v-if="songApp">
+      <input type="range" min="0" :max="songDuration" v-model="currentTime" @input="onSliderChange" />
+      <div>{{ formatTime(currentTime) }} / {{ formatTime(songDuration) }}</div>
     </div>
   </header>
 </template>
