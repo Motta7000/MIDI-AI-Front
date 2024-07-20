@@ -1,9 +1,3 @@
-<template>
-    <div>
-        <input type="file" @change="handleFileChange" accept=".mid,.midi" />
-    </div>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue';
 
@@ -38,6 +32,16 @@ const convertBlobToString = (blob: Blob) => {
     reader.readAsDataURL(blob);
 };
 </script>
+<template>
+
+    <div>
+        <input type="file" @change="handleFileChange" accept=".mid,.midi" />
+    </div>
+
+
+</template>
+
+
 
 <style scoped>
 /* Add your styles here */

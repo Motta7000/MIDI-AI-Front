@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, onBeforeMount } from 'vue';
+import { ref, onMounted, watch, onBeforeMount, onBeforeUnmount } from 'vue';
 import MidiPlayer from 'midi-player-js';
 import Soundfont from 'soundfont-player';
 import { defineProps, defineEmits } from 'vue';
@@ -12,14 +12,16 @@ const props = defineProps<{
     tempo: string,
     midi: string
   },
-  songIsPlaying: boolean
+  songIsPlaying: boolean,
+  seekTo: number,
+  volume: number
 }>();
-console.log(props.songIsPlaying)
-const emits = defineEmits(['playerReady', 'seekTo']);
+const emits = defineEmits(['playerReady', 'updateDuration', 'updateCurrentTime']);
 
 const player = ref<MidiPlayer.Player | null>(null);
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 const soundFont = ref<Soundfont.Player | null>(null);
+let updateTimeInterval: number | null = null;
 
 const loadAndPlayMidi = async (midiUrl: string, soundFontName: string) => {
   try {
@@ -28,76 +30,80 @@ const loadAndPlayMidi = async (midiUrl: string, soundFontName: string) => {
     }
 
     player.value = new MidiPlayer.Player(function (event) {
-      //console.log(event); // Log MIDI events
+      // Log MIDI events
     });
 
-    soundFont.value = await Soundfont.instrument(audioContext, soundFontName);
-
+    //soundFont.value = await Soundfont.instrument(audioContext, 'electric_guitar_jazz');
+    soundFont.value = await Soundfont.instrument(audioContext, 'electric_guitar_jazz');
     player.value.on('midiEvent', (event: any) => {
-      if (event.name === 'Note on' && event.velocity > 0) {
-        soundFont.value?.play(event.noteNumber, audioContext.currentTime, { duration: event.deltaTime / 1000 });
+      if (event.name === 'Note on' && event.velocity > 0 && props.volume <= 1) {
+        soundFont.value?.play(event.noteNumber, audioContext.currentTime, { duration: event.deltaTime / 1000, gain: props.volume });
       } else if (event.name === 'Note off' || (event.name === 'Note on' && event.velocity === 0)) {
         // Handle Note off events or Note on events with velocity 0
         // You might want to stop the note here if your soundfont library supports it
       }
     });
 
-    console.log(props.song.midi);
-
-    player.value.stop();
     player.value.loadDataUri(props.song.midi);
     player.value.play();
-
     emits('playerReady', player.value); // Emit playerReady event
+    const duration = player.value?.getSongTime() || 0;
+    console.log(duration)
+    emits('updateDuration', duration);
+    if (updateTimeInterval) {
+      clearInterval(updateTimeInterval);
+    }
+    updateTimeInterval = setInterval(() => {
+      if (player.value) {
+        console.log(player.value.getSongTimeRemaining())
+        emits('updateCurrentTime', player.value.getSongTimeRemaining());
+      }
+    }, 500);
   } catch (error) {
     console.error('Error loading MIDI file or SoundFont:', error);
   }
 };
+
 onBeforeMount(() => {
   if (player.value) {
     player.value.stop();
   }
 });
-watch(() => props.songIsPlaying, (newValue) => {
 
-  console.log(newValue)
+onBeforeUnmount(() => {
+  if (updateTimeInterval) {
+    clearInterval(updateTimeInterval);
+  }
+});
+
+watch(() => props.songIsPlaying, (newValue) => {
   if (player.value) {
-    if (newValue == true) {
+    if (newValue) {
       player.value.play();
     } else {
       player.value.pause();
     }
   }
 });
-watch(() => props.song, (newValue) => {
-  console.log('*********************************************')
-  console.log(newValue)
-  props.song.midi = newValue.midi
 
-  loadAndPlayMidi(midiFileUrl, soundFontName);
+watch(() => props.song, (newValue) => {
+  loadAndPlayMidi(newValue.midi, soundFontName);
 });
 
-// Example usage: load MIDI file and SoundFont
+watch(() => props.seekTo, (newValue) => {
+  if (player.value) {
+    console.log(newValue)
+    player.value.skipToSeconds(newValue);
+    player.value.play();
+  }
+});
+
 const midiFileUrl = 'public/midi/Oppressed.mid'; // Replace with your MIDI file URL
 const soundFontName = 'electric_piano_1'; // Replace with your SoundFont name
+
 onMounted(() => {
-  if (player.value)
-    player.value.stop();
+  if (player.value) player.value.stop();
   loadAndPlayMidi(midiFileUrl, soundFontName);
-});
-
-// Set duration when track is ready
-if (player.value)
-  player.value.on('endOfTrack', () => {
-    const duration = player.value?.getDuration() || 0;
-    emits('updateDuration', duration);
-  });
-;
-
-emits('seekTo', (time: number) => {
-  if (player.value) {
-    player.value.seek(time);
-  }
 });
 </script>
 

@@ -1,40 +1,31 @@
 <script setup lang="ts">
-
-import { RouterLink, RouterView, useRoute } from 'vue-router'
-import { ref, computed, watch, defineEmits } from 'vue';
+import { RouterView, useRoute } from 'vue-router';
+import { ref, computed, watch } from 'vue';
 import { Icon } from '@iconify/vue';
 import MidiPlayer from './components/MidiPlayer.vue';
-import MidiConverter from './components/MidiConverter.vue'
-import { useUserStore } from '@/stores/counter'
+import { useUserStore } from '@/stores/counter';
 import router from './router';
-import { toast } from 'vue3-toastify';
 
-const userStore = useUserStore(); // Access the user store
-
+const userStore = useUserStore();
 const storedUsername = computed(() => userStore.username);
-const route = useRoute()
-const songIsPlaying = ref(false)
+const route = useRoute();
+const songIsPlaying = ref(false);
 const currentPlayingId = ref<number | null>(null);
-const songApp = ref()
+const songApp = ref();
+const currentTime = ref(0);
+const songDuration = ref(0);
+const seekTo = ref(0);
+const volume = ref(0.5)
+const volumeInput = ref(0.5)
 
-const playSong = (song: {
-  id: number, nombre: string, genero: string, tempo: string
-}) => {
+const playSong = (song: { id: number, nombre: string, genero: string, tempo: string, midi: string }) => {
   songApp.value = song;
   if (songApp.value) {
-    if (currentPlayingId.value === song.id && songIsPlaying.value == true) {
-      // If the song is already playing, pause it
-      console.log(`Pausing song with id: ${song.id}`);
-
+    if (currentPlayingId.value === song.id && songIsPlaying.value) {
       songIsPlaying.value = false;
-    } else if (currentPlayingId.value === song.id && songIsPlaying.value == false) {
-      // If the song is already playing, pause it
-      console.log(`Playing song with id: ${song.id}`);
-
+    } else if (currentPlayingId.value === song.id && !songIsPlaying.value) {
       songIsPlaying.value = true;
     } else {
-      // Play the new song and pause the current one
-      console.log(`Playing song with id: ${song.id}`);
       currentPlayingId.value = song.id;
       songIsPlaying.value = true;
     }
@@ -43,26 +34,23 @@ const playSong = (song: {
 
 function resumeOrPauseSong() {
   if (songApp.value) {
-    console.log('Song inverted!')
     songIsPlaying.value = !songIsPlaying.value;
   }
 }
+
 function logOut() {
-  router.push('/login')
+  router.push('/login');
 }
 
 watch(() => route.path, (newPath) => {
-  console.log('Route change detected')
-  console.log(newPath)
   if (newPath === '/login' || newPath === '/register') {
     songIsPlaying.value = false;
-    console.log('SOngisplaying = false')
   }
 });
+
 function onSliderChange() {
   if (songApp.value) {
-    // Emit event to MIDI player component to seek to the new time
-    emits('seekTo', currentTime.value);
+    seekTo.value = currentTime.value;
   }
 }
 
@@ -72,13 +60,23 @@ function formatTime(time: number) {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
-function seekTo() {
-
+function onUpdateCurrentTime(remainingSeconds: number) {
+  console.log(remainingSeconds)
+  currentTime.value = songDuration.value - remainingSeconds;
+}
+function updateDuration(duration: number) {
+  console.log(duration)
+  songDuration.value = duration;
+}
+function onVolumeChange(vol: number) {
+  // console.log(vol)
+  // vol = vol / 100
+  volume.value = volumeInput.value / 100
+  console.log(volume.value)
 }
 </script>
 
 <template>
-
   <div class="main-component">
     <div v-if="route.path != '/login' && route.path != '/register'" class="collum-container">
       <div class="top-section">
@@ -89,42 +87,96 @@ function seekTo() {
           <p>Cerrar Sesion</p>
         </div>
       </div>
-      <div class="bottom-section">
 
+    </div>
+    <RouterView class="router-view" @playSong="playSong" />
+  </div>
+  <MidiPlayer :volume="volume" @updateDuration="updateDuration" @playerReady="onPlayerReady"
+    @updateCurrentTime="onUpdateCurrentTime" v-if="songApp" :song="songApp" :songIsPlaying="songIsPlaying"
+    :seekTo="seekTo" />
+  <header class="header" v-if="route.path != '/login' && route.path != '/register'">
+    <div class="left-section">
+      <div class="bottom-section">
+        <Icon class="song-icon my-5 mr-1" icon="entypo:note" width="32" height="32" style="color: white" />
         <h2 class="song-title">{{ songApp?.nombre }}</h2>
-        <Icon class="song-icon my-5" icon="entypo:note" width="92" height="92" style="color: white" />
       </div>
     </div>
-    <RouterView @playSong="playSong" />
-  </div>
-  <MidiPlayer @seekTo="seekTo" @playerReady="onPlayerReady" v-if="songApp" :song="songApp"
-    :songIsPlaying="songIsPlaying" />
-  <header class="header" v-if="route.path != '/login' && route.path != '/register'">
-
-    <div class="wrapper ml-5">
-      <Icon v-if='!songIsPlaying' @click="resumeOrPauseSong();" icon="carbon:play-outline" width="60" height="60">
-      </Icon>
-      <Icon v-else @click="resumeOrPauseSong();" icon="material-symbols:pause" width="60" height="60">
-      </Icon>
+    <div class="center-section">
+      <div class="wrapper">
+        <Icon v-if='!songIsPlaying' @click="resumeOrPauseSong();" icon="carbon:play-outline" width="45" height="45" />
+        <Icon v-else @click="resumeOrPauseSong();" icon="material-symbols:pause" width="45" height="45" />
+      </div>
+      <div class="time-slider-container">
+        <input class="time-slider" type="range" min="0" :max="songDuration" v-model="currentTime"
+          @input="onSliderChange" />
+        <div>{{ currentTime ? formatTime(currentTime) : '00:00' }} / {{ formatTime(songDuration) }}</div>
+      </div>
     </div>
-    <!-- Time Slider Controls -->
-    <div class="time-slider-container" v-if="songApp">
-      <input type="range" min="0" :max="songDuration" v-model="currentTime" @input="onSliderChange" />
-      <div>{{ formatTime(currentTime) }} / {{ formatTime(songDuration) }}</div>
+    <div class="right-section">
+      <Icon v-if="volumeInput == 0" icon="uil:volume-mute" width="45" height="45" />
+      <Icon v-if="volumeInput <= 20 && volumeInput > 0" icon="uil:volume-off" width="45" height="45" />
+      <Icon v-if="volumeInput <= 40 && volumeInput > 20" icon="uil:volume-down" width="45" height="45" />
+      <Icon v-if="volumeInput <= 60 && volumeInput > 40" icon="uil:volume" width="45" height="45" />
+      <Icon v-if="volumeInput > 60" icon="uil:volume-up" width="45" height="45" />
+      <input class="volume" type="range" :min="0" :max="100" v-model="volumeInput" @input="onVolumeChange" />
     </div>
   </header>
 </template>
 
 <style scoped>
+.router-view {
+  overflow: auto;
+}
+
+.time-slider {
+  flex: 1;
+}
+
+.time-text {}
+
+.volume {
+  flex: 0.5;
+}
+
 .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
+}
+
+.left-section {
+  flex: 1;
+}
+
+.center-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.time-slider-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  width: 100%;
+
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
 
 }
 
 .collum-container {
   display: flex;
   flex-direction: column;
-
+  min-width: 150px;
   min-height: 100%;
 }
 
@@ -133,13 +185,14 @@ function seekTo() {
   flex-direction: column;
   align-items: center;
   flex-grow: 1;
+
 }
 
 .bottom-section {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
-  flex-direction: column;
+  padding-left: 20px;
 }
 
 .song-icon {
@@ -235,7 +288,7 @@ nav a:first-of-type {
   header {
     display: flex;
 
-    padding-right: calc(var(--section-gap) / 2);
+
   }
 
   .logo {
@@ -255,6 +308,17 @@ nav a:first-of-type {
 
     padding: 1rem 0;
     margin-top: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .collum-container {
+    display: none;
+  }
+
+  .collum-container-phone {
+    display: block
   }
 }
 </style>
