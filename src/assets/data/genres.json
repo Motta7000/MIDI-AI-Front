@@ -1,18 +1,27 @@
 [
     {
       "id": 1,
-      "nombre": "Rock"
+      "nombre": "Rock",
+      "descripcion":"Los videojuegos bla bla bla"
     },
     {
       "id": 2,
-      "nombre":"Pop"
+      "nombre":"Pop",
+      "descripcion":"Los videojuegos bla bla bla"
     },
     {
-      "id": 2,
-      "nombre":"Musica Clasica"
+      "id": 3,
+      "nombre":"Musica Clasica",
+      "descripcion":"Los videojuegos bla bla bla"
     },
     {
-      "id": 2,
-      "nombre":"Funk"
+      "id": 4,
+      "nombre":"Funk",
+      "descripcion":"Los videojuegos bla bla bla"
+    },
+    {
+      "id": 5,
+      "nombre":"Video Games I",
+      "descripcion":"Los videojuegos bla bla bla"
     }
   ]
