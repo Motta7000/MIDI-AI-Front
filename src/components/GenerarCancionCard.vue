@@ -20,6 +20,7 @@ const props = defineProps<{
     genre: {
         id: number,
         nombre: string,
+        descripcion: string
     }
 }>();
 
@@ -53,7 +54,7 @@ const onSubmit = handleSubmit(
             </v-card-subtitle>
         </v-card-item>
         <v-card-text>
-            El rock es un genero musical el cual proviene de bla bla
+            {{ props.genre.descripcion }}
         </v-card-text>
     </v-card>
 

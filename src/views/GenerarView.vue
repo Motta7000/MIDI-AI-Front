@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue';
 import rawGenres from '../assets/data/genres.json';
 import { Icon } from '@iconify/vue';
-import ModalGenerarCancion from '../components/ModalGenerarCancion.vue';
+import ModalGenerarCancion from '../components/GenerarCancionCard.vue';
 
 const search = ref<string | null>(null);
 

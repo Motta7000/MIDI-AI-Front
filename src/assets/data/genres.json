@@ -12,16 +12,18 @@
     {
       "id": 3,
       "nombre":"Musica Clasica",
-      "descripcion":"Los videojuegos bla bla bla"
+      "descripcion":"La música clásica es conocida por su complejidad y expresividad, destacando compositores como Bach y Beethoven.",
+      "dataset":1000
     },
     {
       "id": 4,
       "nombre":"Funk",
-      "descripcion":"Los videojuegos bla bla bla"
+      "descripcion":"El funk es un género musical caracterizado por ritmos sincopados, líneas de bajo prominentes y un fuerte groove"
     },
     {
       "id": 5,
-      "nombre":"Video Games I",
-      "descripcion":"Los videojuegos bla bla bla"
+      "nombre":"Video Juegos I",
+      "descripcion":"Los videojuegos historicamente utilizaron archivos MIDI",
+      "dataset": 100
     }
   ]
