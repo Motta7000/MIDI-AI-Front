@@ -2,12 +2,12 @@
     {
       "id": 1,
       "nombre": "Rock",
-      "descripcion":"Los videojuegos bla bla bla"
+      "descripcion":""
     },
     {
       "id": 2,
       "nombre":"Pop",
-      "descripcion":"Los videojuegos bla bla bla"
+      "descripcion":""
     },
     {
       "id": 3,
