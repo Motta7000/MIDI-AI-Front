@@ -5,6 +5,7 @@ import { Icon } from '@iconify/vue';
 import MidiPlayer from './components/MidiPlayer.vue';
 import { useUserStore } from '@/stores/counter';
 import router from './router';
+import axios from 'axios';
 
 const userStore = useUserStore();
 const storedUsername = computed(() => userStore.username);
@@ -18,19 +19,36 @@ const seekTo = ref(0);
 const volume = ref(0.5)
 const volumeInput = ref(0.5)
 
-const playSong = (song: { id: number, nombre: string, genero: string, tempo: string, midi: string }) => {
+const playSong = (song: { SongId: number, nombre: string, genero: string, tempo: string, midi: string }) => {
+  console.log(song)
   songApp.value = song;
   if (songApp.value) {
-    if (currentPlayingId.value === song.id && songIsPlaying.value) {
-      songIsPlaying.value = false;
-    } else if (currentPlayingId.value === song.id && !songIsPlaying.value) {
-      songIsPlaying.value = true;
+    if (currentPlayingId.value === song.SongId && songIsPlaying.value) {
+      songIsPlaying.value = false;  // Pausa la cancion
+    } else if (currentPlayingId.value === song.SongId && !songIsPlaying.value) {
+      songIsPlaying.value = true;   // Inicia la cancion
     } else {
-      currentPlayingId.value = song.id;
+      // Comenzamos a reproducir la cancion
+      currentPlayingId.value = song.SongId;
       songIsPlaying.value = true;
+      fetchSongMidi()
     }
   }
 };
+async function fetchSongMidi(object_key: string, UserId: string) {
+  try {
+    const awsUrl = import.meta.env.VITE_AWS;
+    console.log(`${awsUrl}/songs`)
+    const response = await axios.get(`${awsUrl}/songs`, {
+      UserId: 'id1',
+      object_key: 'Animal_Crossing_Save_Screen.mid'
+    });
+    songs.value = response.data;
+    console.log(songs.value)
+  } catch (error) {
+    console.error('Failed to fetch songs:', error);
+  }
+}
 
 function resumeOrPauseSong() {
   if (songApp.value) {

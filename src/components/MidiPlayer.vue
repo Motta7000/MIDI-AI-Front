@@ -6,7 +6,7 @@ import { defineProps, defineEmits } from 'vue';
 const delay = ms => new Promise(res => setTimeout(res, ms))
 const props = defineProps<{
   song: {
-    id: number,
+    SongId: number,
     nombre: string,
     genero: string,
     tempo: string,

@@ -4,10 +4,12 @@ import { ref } from 'vue';
 import rawSongs from '../assets/data/songs.json'
 import TdCanciones from '../components/TdCanciones.vue'
 import router from '@/router';
+import axios from 'axios';
 
 const emit = defineEmits<{
   (e: 'playSong', song: {
-    id: number,
+    SongId: number,
+    S3Id: string,
     nombre: string,
     genero: string,
     tempo: string
@@ -16,8 +18,24 @@ const emit = defineEmits<{
 
 const songs = ref(rawSongs)
 function playSong(idSong: number) {
-  emit('playSong', songs.value.find(s => s.id === idSong))
+  emit('playSong', songs.value.find(s => s.SongId === idSong))
 }
+async function fetchSongs() {
+  try {
+    const awsUrl = import.meta.env.VITE_AWS;
+    console.log(`${awsUrl}/songs`)
+    const response = await axios.get(`${awsUrl}/songs`, {
+      params: {
+        UserId: 'id1'
+      }
+    });
+    songs.value = response.data;
+    console.log(songs.value)
+  } catch (error) {
+    console.error('Failed to fetch songs:', error);
+  }
+}
+fetchSongs()
 </script>
 <template>
   <div class="canciones">
