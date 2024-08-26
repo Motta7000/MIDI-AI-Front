@@ -40,7 +40,7 @@ const loadAndPlayMidi = async () => {
   });
   //soundFont.value = await Soundfont.instrument(audioContext, 'electric_guitar_jazz');
   soundFont.value = null;
-  soundFont.value = await Soundfont.instrument(audioContext, 'electric_guitar_jazz');
+  soundFont.value = await Soundfont.instrument(audioContext, 'acoustic_grand_piano');
   player.value.on('midiEvent', async (event: any) => {
     if (event.name === 'Note on' && event.velocity > 0 && props.volume <= 1) {
 
@@ -50,7 +50,7 @@ const loadAndPlayMidi = async () => {
       // You might want to stop the note here if your soundfont library supports it
     }
   });
-
+  console.log(props.song.midi)
   player.value.loadDataUri(props.song.midi);
   player.value.play();
   emits('playerReady', player.value); // Emit playerReady event

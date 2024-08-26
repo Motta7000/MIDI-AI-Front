@@ -5,18 +5,12 @@ import LoginView from '../views/LoginView.vue'
 import ConverterView from '../views/ConverterView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import GenerarView from '../views/GenerarView.vue'
+import { computed } from 'vue';
+import { useUserStore } from '@/stores/counter';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [    
-    {
-    path: '/:catchAll(.*)', // Match any unmatched routes
-    redirect: '/' // Redirect to the home route
-  },
-    {
-      path: '/',
-      redirect:'/login'
-    },
     {
       path: '/about',
       name: 'about',
@@ -49,15 +43,34 @@ const router = createRouter({
       path:'/generar',
       name:'generar',
       component:GenerarView
+    },
+    {
+      path: '/',
+      redirect:'/login'
+    },
+    {
+      path: '/:catchAll(.*)', // Catch all unmatched routes
+      redirect: '/login'
     }
   ]
 })
 
 // Navigation guard
-/*
-router.beforeEach(async (to, from, next) => {
 
-  if (to.path !== '/login') {
+router.beforeEach(async (to, from, next) => {
+  if (to.path !== '/login' && to.path != '/register') {
+    const userStore = useUserStore();
+    const storedUsername = computed(() => userStore.username);
+    if(storedUsername.value == '')
+    {
+      next('/login')
+    }
+    else
+    {
+      next()
+    }
+    /*
+    console.log(storedUsername.value)
     const sessionActive = await checkSession();
     console.log(sessionActive);
     try {
@@ -77,15 +90,15 @@ router.beforeEach(async (to, from, next) => {
 
       store.dispatch('stopLoading');
     }
+      */
   }
   else {
-
     next();
-    store.dispatch('stopLoading');
+   // store.dispatch('stopLoading');
   }
 
 }
   
 );
-*/
+
 export default router

@@ -3,23 +3,26 @@
 import { Icon } from '@iconify/vue';
 const props = defineProps<{
     song: {
+        S3Id: number,
         SongId: number,
         nombre: string,
         genre: string,
-        BPM: string
+        BPM: string,
+        createAt: number,
+        title: string
     }
 }>();
 const emit = defineEmits<{
-    (e: 'playSong', SongId: number): void
+    (e: 'playSong', S3Id: number): void
 }>();
 </script>
 
 <template>
     <tr>
         <td class="flex-td">
-            <Icon @click="emit('playSong', props.song.SongId);" icon="carbon:play-outline" width="44" height="44">
+            <Icon @click="emit('playSong', props.song.S3Id);" icon="carbon:play-outline" width="44" height="44">
             </Icon>{{
-                props.song?.S3Id }}
+                props.song?.title }}
         </td>
         <td>{{ props.song?.genre }}</td>
         <td>{{ props.song?.BPM }}</td>

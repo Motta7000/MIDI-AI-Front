@@ -9,20 +9,23 @@ import axios from 'axios';
 
 const userStore = useUserStore();
 const storedUsername = computed(() => userStore.username);
+
 const route = useRoute();
 const songIsPlaying = ref(false);
 const currentPlayingId = ref<number | null>(null);
 const songApp = ref();
+const songData = ref()
 const currentTime = ref(0);
 const songDuration = ref(0);
 const seekTo = ref(0);
-const volume = ref(0.5)
-const volumeInput = ref(0.5)
+const volume = ref(1)
+const volumeInput = ref(100)
+const aux = ref()
 
-const playSong = (song: { SongId: number, nombre: string, genero: string, tempo: string, midi: string }) => {
+const playSong = async (song: { S3Id: string, nombre: string, genero: string, tempo: string, midi: string, SongId: number }) => {
   console.log(song)
-  songApp.value = song;
-  if (songApp.value) {
+  songData.value = song;
+  if (song) {
     if (currentPlayingId.value === song.SongId && songIsPlaying.value) {
       songIsPlaying.value = false;  // Pausa la cancion
     } else if (currentPlayingId.value === song.SongId && !songIsPlaying.value) {
@@ -31,7 +34,11 @@ const playSong = (song: { SongId: number, nombre: string, genero: string, tempo:
       // Comenzamos a reproducir la cancion
       currentPlayingId.value = song.SongId;
       songIsPlaying.value = true;
-      fetchSongMidi()
+
+      aux.value = await fetchSongMidi(song.S3Id, 'user1234')
+      songApp.value = { midi: '' }
+      songApp.value.midi = aux.value.base64_content
+      console.log(songApp.value)
     }
   }
 };
@@ -39,15 +46,35 @@ async function fetchSongMidi(object_key: string, UserId: string) {
   try {
     const awsUrl = import.meta.env.VITE_AWS;
     console.log(`${awsUrl}/songs`)
-    const response = await axios.get(`${awsUrl}/songs`, {
-      UserId: 'id1',
-      object_key: 'Animal_Crossing_Save_Screen.mid'
+    const response = await axios.post(`${awsUrl}/songs`, {
+      UserId: 'user1234',
+      object_key: object_key
     });
-    songs.value = response.data;
-    console.log(songs.value)
+    // Ensure the response type is handled as a binary stream
+    // Convert ArrayBuffer to Blob
+    return response.data
+
   } catch (error) {
     console.error('Failed to fetch songs:', error);
   }
+}
+function blobToBase64(blob: Blob): Promise<string> {
+  console.log("a")
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      // The result contains the base64 string with the data URL prefix
+      const base64String = (reader.result as string).split(',')[1];
+      resolve(base64String);
+    };
+
+    reader.onerror = () => {
+      reject(new Error('Failed to convert Blob to base64'));
+    };
+
+    reader.readAsDataURL(blob); // Read the Blob as a Data URL
+  });
 }
 
 function resumeOrPauseSong() {
@@ -58,6 +85,7 @@ function resumeOrPauseSong() {
 
 function logOut() {
   router.push('/login');
+  userStore.clearUsername();
 }
 
 watch(() => route.path, (newPath) => {
@@ -116,7 +144,7 @@ function onVolumeChange(vol: number) {
     <div class="left-section">
       <div class="bottom-section">
         <Icon class="song-icon my-5 mr-1" icon="entypo:note" width="32" height="32" style="color: white" />
-        <h2 class="song-title">{{ songApp?.nombre }}</h2>
+        <h2 class="song-title">{{ songData?.title }}</h2>
       </div>
     </div>
     <div class="center-section">

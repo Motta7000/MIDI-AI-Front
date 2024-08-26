@@ -8,8 +8,10 @@ export const useUserStore = defineStore('user', () => {
   function setUsername(newUsername: string) {
     username.value = newUsername
   }
-
-  return { username, setUsername }
+  function clearUsername() {
+   username.value = '';
+  }
+  return { username, setUsername,clearUsername }
 }, {
   persist: {
     key: 'user-store',

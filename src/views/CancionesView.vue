@@ -5,6 +5,7 @@ import rawSongs from '../assets/data/songs.json'
 import TdCanciones from '../components/TdCanciones.vue'
 import router from '@/router';
 import axios from 'axios';
+import Loading from '@/components/Loading.vue';
 
 const emit = defineEmits<{
   (e: 'playSong', song: {
@@ -16,9 +17,9 @@ const emit = defineEmits<{
   }): void
 }>();
 
-const songs = ref(rawSongs)
-function playSong(idSong: number) {
-  emit('playSong', songs.value.find(s => s.SongId === idSong))
+const songs = ref()
+function playSong(S3Id: number) {
+  emit('playSong', songs.value.find(s => s.S3Id === S3Id))
 }
 async function fetchSongs() {
   try {
@@ -26,7 +27,7 @@ async function fetchSongs() {
     console.log(`${awsUrl}/songs`)
     const response = await axios.get(`${awsUrl}/songs`, {
       params: {
-        UserId: 'id1'
+        UserId: 'user1234'
       }
     });
     songs.value = response.data;
@@ -39,7 +40,6 @@ fetchSongs()
 </script>
 <template>
   <div class="canciones">
-
     <div class="body-container ">
       <h1 class="h1 pt-5">Canciones</h1>
       <v-btn class="my-3 button" color="success" @click="router.push('/generar')">+ Generar canciones</v-btn>
@@ -57,10 +57,14 @@ fetchSongs()
             </th>
           </tr>
         </thead>
-        <tbody>
-          <TdCanciones @playSong="playSong" v-for="song in songs" :song="song" :key="song.id"></TdCanciones>
+        <tbody class="t-body">
+          <TdCanciones v-if="songs" @playSong="playSong" v-for="song in songs" :song="song" :key="song.id">
+          </TdCanciones>
+
         </tbody>
+
       </v-table>
+      <Loading v-if="!songs" :white="true">aaa</Loading>
     </div>
 
   </div>
