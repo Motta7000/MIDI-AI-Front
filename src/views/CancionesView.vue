@@ -19,7 +19,7 @@ const emit = defineEmits<{
 
 const songs = ref()
 function playSong(S3Id: number) {
-  emit('playSong', songs.value.find(s => s.S3Id === S3Id))
+  emit('playSong', songs.value.find((s: { S3Id: number; }) => s.S3Id === S3Id))
 }
 async function fetchSongs() {
   try {

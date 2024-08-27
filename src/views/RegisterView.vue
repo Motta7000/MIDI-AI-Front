@@ -27,7 +27,6 @@ const validateForm = handleSubmit(
   async values => {
     formSended = true;
     console.log(values)
-    errors.value = {};
     router.push('/login')
     alert('Validation succeeded');
     console.log(username.value, password.value, repeatPassword.value)
@@ -95,7 +94,7 @@ onBeforeRouteLeave((to, from, next) => {
                 <v-btn class="mt-3" color="success" type="submit">Enviar</v-btn>
               </v-row>
               <v-row cols="12" md="4">
-                <RouterLink class="mt-1" to="/login" @click.native="confirmNavigation">¿Ya tienes cuenta? Ingresa aquí
+                <RouterLink class="mt-1" to="/login" @click.native="">¿Ya tienes cuenta? Ingresa aquí
                 </RouterLink>
               </v-row>
             </v-col>

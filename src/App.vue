@@ -114,7 +114,7 @@ function updateDuration(duration: number) {
   console.log(duration)
   songDuration.value = duration;
 }
-function onVolumeChange(vol: number) {
+function onVolumeChange(event: Event) {
   // console.log(vol)
   // vol = vol / 100
   volume.value = volumeInput.value / 100
@@ -137,9 +137,8 @@ function onVolumeChange(vol: number) {
     </div>
     <RouterView class="router-view" @playSong="playSong" />
   </div>
-  <MidiPlayer :volume="volume" @updateDuration="updateDuration" @playerReady="onPlayerReady"
-    @updateCurrentTime="onUpdateCurrentTime" v-if="songApp" :song="songApp" :songIsPlaying="songIsPlaying"
-    :seekTo="seekTo" />
+  <MidiPlayer :volume="volume" @updateDuration="updateDuration" @playerReady="" @updateCurrentTime="onUpdateCurrentTime"
+    v-if="songApp" :song="songApp" :songIsPlaying="songIsPlaying" :seekTo="seekTo" />
   <header class="header" v-if="route.path != '/login' && route.path != '/register'">
     <div class="left-section">
       <div class="bottom-section">
