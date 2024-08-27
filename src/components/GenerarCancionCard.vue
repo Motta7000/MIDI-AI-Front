@@ -66,7 +66,7 @@ const onSubmit = handleSubmit(
             </v-card-title>
 
             <v-col class="v-col pt-5" cols="12" md="8" sm="6">
-                <v-text-field class="v-text-field" v-model="bpm" :rules="bpmRules" label="BPM" hide-details
+                <v-text-field class="v-text-field" v-model="bpm" :rules="" label="BPM" hide-details
                     required></v-text-field>
                 <v-card-text class="error-text">{{ errors.bpm }} </v-card-text>
 
