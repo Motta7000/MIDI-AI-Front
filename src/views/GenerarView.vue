@@ -123,5 +123,9 @@ const emit = defineEmits<{
   .flex-title {
     flex-direction: column;
   }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 </style>

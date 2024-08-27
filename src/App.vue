@@ -126,14 +126,13 @@ function onVolumeChange(event: Event) {
   <div class="main-component">
     <div v-if="route.path != '/login' && route.path != '/register'" class="collum-container">
       <div class="top-section">
-        <Icon class="icon mt-5" icon="iconamoon:profile" width="70" height="70" />
-        <p class="mt-5 px-3">¡Bienvenido {{ storedUsername }}!</p>
-        <div @click="logOut()" class="cerrar-container mt-5">
+        <Icon class="icon mt-5 margin-top" icon="iconamoon:profile" width="70" height="70" />
+        <p class="mt-5 px-3 margin-top">¡Bienvenido {{ storedUsername }}!</p>
+        <div @click="logOut()" class="cerrar-container mt-5 margin-top">
           <Icon icon="bitcoin-icons:exit-outline" width="30" height="30" style="color: white" />
           <p>Cerrar Sesion</p>
         </div>
       </div>
-
     </div>
     <RouterView class="router-view" @playSong="playSong" />
   </div>
@@ -332,8 +331,6 @@ nav a:first-of-type {
 @media (min-width: 1024px) {
   header {
     display: flex;
-
-
   }
 
   .logo {
@@ -350,7 +347,6 @@ nav a:first-of-type {
     text-align: left;
     margin-left: -1rem;
     font-size: 1rem;
-
     padding: 1rem 0;
     margin-top: 1rem;
   }
@@ -358,12 +354,51 @@ nav a:first-of-type {
 
 @media (max-width: 600px) {
 
+
+  .song-title {
+    font-size: 12px;
+  }
+
+  .main-component {
+    flex-direction: column;
+  }
+
+  .margin-top {
+    margin-top: 0 !important;
+  }
+
   .collum-container {
-    display: none;
+
+    width: 100%;
+    min-height: auto;
+  }
+
+  .top-section {
+    flex-direction: row;
   }
 
   .collum-container-phone {
     display: block
+  }
+
+  .left-section {
+    flex: 0.2;
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .song-icon {
+    display: none;
+  }
+
+  .center-section {
+    margin: 20px;
+  }
+
+  .right-section {
+    display: none;
   }
 }
 </style>

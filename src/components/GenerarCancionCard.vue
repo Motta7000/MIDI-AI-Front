@@ -11,7 +11,7 @@ const { values, errors, handleSubmit, defineField } =
     useForm({
         validationSchema: yup.object({
             // usuario: yup.string().eusuario().required(),
-            bpm: yup.number().typeError("Ingresar un numero").moreThan(0, 'El número debe ser mayor que 0').required('Ingresar bpm'),
+            bpm: yup.number().optional().nullable().typeError("Ingresar un numero").moreThan(0, 'El número debe ser mayor que 0'),
         })
     })
 const [bpm, bpmAttrs] = defineField('bpm')
@@ -44,7 +44,7 @@ const onSubmit = handleSubmit(
 );
 </script>
 <template>
-    <v-card class="v-card" @click="dialogVisible = true">
+    <v-card class="v-card card" @click="dialogVisible = true">
         <v-card-item>
             <v-card-title>
                 {{ props.genre.nombre }}
@@ -81,6 +81,11 @@ const onSubmit = handleSubmit(
 </template>
 
 <style scoped>
+.card {
+    max-height: 300px;
+    min-height: 200px;
+}
+
 .v-col {}
 
 .error-text {
