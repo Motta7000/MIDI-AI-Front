@@ -8,8 +8,10 @@ import GenerarView from '../views/GenerarView.vue'
 import { computed } from 'vue';
 import { useUserStore } from '@/stores/counter';
 
+const base = import.meta.env.BASE_URL
+
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(base),
   routes: [    
     {
       path: '/about',

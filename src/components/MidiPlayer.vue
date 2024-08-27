@@ -3,7 +3,7 @@ import { ref, onMounted, watch, onBeforeMount, onBeforeUnmount } from 'vue';
 import MidiPlayer from 'midi-player-js';
 import Soundfont from 'soundfont-player';
 import { defineProps, defineEmits } from 'vue';
-const delay = ms => new Promise(res => setTimeout(res, ms))
+
 const props = defineProps<{
   song: {
     SongId: number,
@@ -34,7 +34,7 @@ const loadAndPlayMidi = async () => {
     }
   }
   player.value = null;
-  player.value = new MidiPlayer.Player((event) => {
+  player.value = new MidiPlayer.Player((event: object) => {
     // Log MIDI events
     console.log(event);
   });
@@ -65,7 +65,7 @@ const loadAndPlayMidi = async () => {
       console.log(player.value.getSongTimeRemaining())
       emits('updateCurrentTime', player.value.getSongTimeRemaining());
     }
-  }, 500);
+  }, 500) as unknown as number;
 
 };
 
@@ -109,7 +109,7 @@ const soundFontName = 'electric_piano_1'; // Replace with your SoundFont name
 
 onMounted(() => {
   if (player.value) player.value.stop();
-  loadAndPlayMidi(midiFileUrl, soundFontName);
+  loadAndPlayMidi();
 });
 </script>
 
