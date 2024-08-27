@@ -19,7 +19,7 @@ const props = defineProps<{
 const emits = defineEmits(['playerReady', 'updateDuration', 'updateCurrentTime']);
 
 const player = ref<MidiPlayer.Player | null>(null);
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+const audioContext = new (window.AudioContext || window.AudioContext)();
 const soundFont = ref<Soundfont.Player | null>(null);
 let updateTimeInterval: number | null = null;
 
