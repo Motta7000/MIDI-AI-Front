@@ -14,12 +14,23 @@ const emit = defineEmits<{
     nombre: string,
     genero: string,
     tempo: string
+  }): void;
+  (e: 'downloadSong', song: {
+    SongId: number,
+    S3Id: string,
+    title: string,
+    genero: string,
+    tempo: string
   }): void
 }>();
 
 const songs = ref()
 function playSong(S3Id: number) {
-  emit('playSong', songs.value.find((s: { S3Id: number; }) => s.S3Id === S3Id))
+  emit('playSong', songs.value.find((s: { S3Id: number; }) => s.S3Id === S3Id));
+
+}
+function downloadSong(S3Id: number) {
+  emit('downloadSong', songs.value.find((s: { S3Id: number; }) => s.S3Id === S3Id))
 }
 async function fetchSongs() {
   try {
@@ -55,10 +66,12 @@ fetchSongs()
             <th class="text-left">
               Tempo
             </th>
+            <th></th>
           </tr>
         </thead>
         <tbody class="t-body">
-          <TdCanciones v-if="songs" @playSong="playSong" v-for="song in songs" :song="song" :key="song.id">
+          <TdCanciones v-if="songs" @playSong="playSong" @downloadSong="downloadSong" v-for="song in songs" :song="song"
+            :key="song.id">
           </TdCanciones>
 
         </tbody>

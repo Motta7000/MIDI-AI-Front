@@ -13,7 +13,8 @@ const props = defineProps<{
     }
 }>();
 const emit = defineEmits<{
-    (e: 'playSong', S3Id: number): void
+    (e: 'playSong', S3Id: number): void;
+    (e: 'downloadSong', S3Id: number): void;
 }>();
 </script>
 
@@ -26,6 +27,11 @@ const emit = defineEmits<{
         </td>
         <td>{{ props.song?.genre }}</td>
         <td>{{ props.song?.BPM }}</td>
+        <td class="td-icon">
+            <Icon @click="emit('downloadSong', props.song.S3Id);" icon="material-symbols:download" width="25"
+                height="25" />
+        </td>
+
     </tr>
 </template>
 
@@ -34,4 +40,6 @@ const emit = defineEmits<{
     display: flex;
     align-items: center;
 }
+
+.td-icon {}
 </style>

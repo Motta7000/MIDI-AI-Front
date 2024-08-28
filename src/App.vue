@@ -6,6 +6,7 @@ import MidiPlayer from './components/MidiPlayer.vue';
 import { useUserStore } from '@/stores/counter';
 import router from './router';
 import axios from 'axios';
+import { downloadFile } from './functions/functions';
 
 const userStore = useUserStore();
 const storedUsername = computed(() => userStore.username);
@@ -42,6 +43,12 @@ const playSong = async (song: { S3Id: string, nombre: string, genero: string, te
     }
   }
 };
+
+const downloadSong = async (song: { S3Id: string, title: string, genero: string, tempo: string, midi: string, SongId: number }) => {
+  aux.value = await fetchSongMidi(song.S3Id, 'user1234')
+  aux.value = aux.value.base64_content
+  downloadFile(aux.value, song.title + ".mid")
+}
 async function fetchSongMidi(object_key: string, UserId: string) {
   try {
     const awsUrl = import.meta.env.VITE_AWS;
@@ -134,7 +141,7 @@ function onVolumeChange(event: Event) {
         </div>
       </div>
     </div>
-    <RouterView class="router-view" @playSong="playSong" />
+    <RouterView class="router-view" @playSong="playSong" @downloadSong="downloadSong" />
   </div>
   <MidiPlayer :volume="volume" @updateDuration="updateDuration" @playerReady="" @updateCurrentTime="onUpdateCurrentTime"
     v-if="songApp" :song="songApp" :songIsPlaying="songIsPlaying" :seekTo="seekTo" />
