@@ -160,7 +160,7 @@ function onVolumeChange(event: Event) {
       <div class="time-slider-container">
         <input class="time-slider" type="range" min="0" :max="songDuration" v-model="currentTime"
           @input="onSliderChange" />
-        <div>{{ currentTime ? formatTime(currentTime) : '00:00' }} / {{ formatTime(songDuration) }}</div>
+        <div class="pl-1">{{ currentTime ? formatTime(currentTime) : '00:00' }} / {{ formatTime(songDuration) }}</div>
       </div>
     </div>
     <div class="right-section">
@@ -300,7 +300,7 @@ function onVolumeChange(event: Event) {
 
 header {
   line-height: 1.5;
-  height: 12vh;
+
   width: 100vw;
   background-color: black;
 }
@@ -346,7 +346,6 @@ nav a:first-of-type {
 
   header .wrapper {
     display: flex;
-
     flex-wrap: wrap;
   }
 

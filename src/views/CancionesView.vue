@@ -122,5 +122,13 @@ fetchSongs()
     display: flex;
     align-items: center;
   }
+
+
+}
+
+@media (max-width: 1024px) {
+  .body-container {
+    width: 90% !important;
+  }
 }
 </style>

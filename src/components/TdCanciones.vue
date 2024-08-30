@@ -21,21 +21,36 @@ const emit = defineEmits<{
 <template>
     <tr>
         <td class="flex-td">
-            <Icon @click="emit('playSong', props.song.S3Id);" icon="carbon:play-outline" width="44" height="44">
+            <Icon class="icon" @click="emit('playSong', props.song.S3Id);" icon="carbon:play-outline" width="37"
+                height="37">
             </Icon>{{
                 props.song?.title }}
         </td>
         <td>{{ props.song?.genre }}</td>
         <td>{{ props.song?.BPM }}</td>
         <td class="td-icon">
-            <Icon @click="emit('downloadSong', props.song.S3Id);" icon="material-symbols:download" width="25"
-                height="25" />
+            <Icon class="icon" @click="emit('downloadSong', props.song.S3Id);" icon="material-symbols:download"
+                width="25" height="25" />
         </td>
-
     </tr>
 </template>
 
 <style scoped>
+.icon {
+    transition: all 0.25s;
+}
+
+.icon:hover {
+    transform: scale(1.10);
+    cursor: pointer;
+    transition: all 0.25s;
+}
+
+.icon:active {
+    transform: scale(1);
+    transition: all 0.00001s;
+}
+
 .flex-td {
     display: flex;
     align-items: center;

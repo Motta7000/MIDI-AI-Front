@@ -94,6 +94,8 @@ const onSubmit = handleSubmit(
 
 .v-card-title {
     font-size: 25px;
+    text-wrap: wrap;
+    text-align: center;
 }
 
 .flex-container {
