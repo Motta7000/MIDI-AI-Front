@@ -6,6 +6,7 @@ import TdCanciones from '../components/TdCanciones.vue'
 import router from '@/router';
 import axios from 'axios';
 import Loading from '@/components/Loading.vue';
+import { toast, type ToastOptions } from 'vue3-toastify';
 
 const emit = defineEmits<{
   (e: 'playSong', song: {
@@ -45,9 +46,11 @@ async function fetchSongs() {
     console.log(songs.value)
   } catch (error) {
     console.error('Failed to fetch songs:', error);
+    toast.error((error as Error).message);
   }
 }
 fetchSongs()
+
 </script>
 <template>
   <div class="canciones">

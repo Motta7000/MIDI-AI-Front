@@ -5,13 +5,18 @@ import * as yup from 'yup';
 import { useForm } from 'vee-validate';
 import { toast, type ToastOptions } from 'vue3-toastify';
 import router from '@/router';
+import axios from 'axios';
 
 
 const { values, errors, handleSubmit, defineField } =
     useForm({
         validationSchema: yup.object({
             // usuario: yup.string().eusuario().required(),
-            bpm: yup.number().optional().nullable().typeError("Ingresar un numero").moreThan(0, 'El número debe ser mayor que 0'),
+            bpm: yup.number()
+                .nullable()
+                .transform((value, originalValue) => originalValue.trim() === '' ? null : value)
+                .typeError("Ingresar un número")
+                .moreThan(0, 'El número debe ser mayor que 0')
         })
     })
 const [bpm, bpmAttrs] = defineField('bpm')
@@ -33,13 +38,24 @@ const onSubmit = handleSubmit(
     async values => {
         //Aca iria el fetch
         dialogVisible.value = false;
+        const awsUrl = import.meta.env.VITE_AWS;
         router.push('/canciones')
+        const response = await axios.post(`${awsUrl}/generateSong`, {
+            UserId: 'user1234',
+            SongId: '1234',
+            title: 'New Song',
+            genre: 'Video Games 1',
+            BPM: 120
+        });
+        console.log(response)
         await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 3 seconds
         toast.success('La Cancion fue generada exitosamente')
 
     },
     ({ errors }) => {
         console.log(errors)
+        const errorMessages = Object.values(errors).join(', ');
+        toast.error(errorMessages);
     },
 );
 </script>

@@ -5,7 +5,6 @@ import * as yup from 'yup';
 import { Icon } from '@iconify/vue';
 import router from '@/router';
 import { useUserStore } from '@/stores/counter'
-
 // Define YUP validation schema
 const show1 = ref(false)
 const schema = yup.object().shape({
@@ -17,7 +16,7 @@ const userStore = useUserStore();
 const username = ref('');
 const password = ref('');
 const valid = ref(false);
-const errors = ref<{ username?: string; password?: string }>({});
+const errors = ref<{ username?: string; password?: string; api?: string }>({});
 
 // Define validation rules
 const usernameRules = [
@@ -28,23 +27,47 @@ const passwordRules = [
 ];
 
 // Validate form
+import axios from 'axios';
+
 const validateForm = async () => {
   try {
+    // Validate the form input using the schema
     await schema.validate({ username: username.value, password: password.value }, { abortEarly: false });
     errors.value = {};
 
-    userStore.setUsername(username.value); // Save the username in the store
-    router.push('/canciones')
-  } catch (err) {
-    if (err instanceof yup.ValidationError) {
+    // Send a POST request to the API for user authentication
+    const response = await axios.post(`${import.meta.env.VITE_AWS2}/user`, {
+      username: username.value,
+      password: password.value
+    });
 
+    // If the response is successful, save the username and navigate to the canciones page
+    if (response.status === 200) {
+      userStore.setUsername(username.value); // Save the username in the store
+      router.push('/canciones');
+    }
+    else {
+
+    }
+  } catch (err) {
+    // Handle validation errors from the schema
+    if (err instanceof yup.ValidationError) {
       errors.value = err.inner.reduce((acc: any, error: yup.ValidationError) => {
         acc[error.path!] = error.message;
         return acc;
       }, {});
     }
+
+    // Handle errors from the API
+    if (axios.isAxiosError(err)) {
+      console.error('Login failed:', err.response?.data.message || err.message);
+
+      // Show the error message to the user, e.g., setting an `apiError` variable
+      errors.value = { api: err.response?.data.message || err.message };
+    }
   }
 };
+
 </script>
 <template>
   <div class="login">
@@ -90,6 +113,9 @@ const validateForm = async () => {
                 <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
               </v-row>
               <v-row cols="12" md="4">
+                <span v-if="errors.api" class="error-message">{{ errors.api }}</span>
+              </v-row>
+              <v-row cols="12" md="4">
                 <v-btn class="mt-3" color="success" @click="validateForm">Enviar</v-btn>
               </v-row>
               <v-row cols="12" md="4">
@@ -106,6 +132,10 @@ const validateForm = async () => {
 </template>
 
 <style scoped>
+.error-message {
+  color: rgb(255, 60, 60);
+}
+
 .v-row {
   justify-content: center;
 }

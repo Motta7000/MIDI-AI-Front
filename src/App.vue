@@ -7,6 +7,7 @@ import { useUserStore } from '@/stores/counter';
 import router from './router';
 import axios from 'axios';
 import { downloadFile } from './functions/functions';
+import { toast } from 'vue3-toastify';
 
 const userStore = useUserStore();
 const storedUsername = computed(() => userStore.username);
@@ -53,7 +54,7 @@ async function fetchSongMidi(object_key: string, UserId: string) {
   try {
     const awsUrl = import.meta.env.VITE_AWS;
     console.log(`${awsUrl}/songs`)
-    const response = await axios.post(`${awsUrl}/songs`, {
+    const response = await axios.post(`${import.meta.env.VITE_AWS}/prod/songs`, {
       UserId: 'user1234',
       object_key: object_key
     });
@@ -63,6 +64,7 @@ async function fetchSongMidi(object_key: string, UserId: string) {
 
   } catch (error) {
     console.error('Failed to fetch songs:', error);
+    toast.error((error as Error).message);
   }
 }
 function blobToBase64(blob: Blob): Promise<string> {
