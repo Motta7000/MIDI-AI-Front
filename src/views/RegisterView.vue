@@ -6,12 +6,14 @@ import { Icon } from '@iconify/vue';
 import router from '@/router';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useForm } from 'vee-validate';
+import axios from 'axios';
 
 const { values, errors, handleSubmit, defineField, setFieldTouched } =
   useForm({
     validationSchema: yup.object({
       username: yup.string().required('Ingresar Nombre'),
       password: yup.string().required('Ingresar Contraseña').oneOf([yup.ref('repeatPassword')], 'Las contraseñas deben coincidir'),
+      email: yup.string().required('Ingresar Contraseña').email('Ingrese un Mail'),
       repeatPassword: yup.string().required('Repetir contraseña').oneOf([yup.ref('password')], 'Las contraseñas deben coincidir')
     })
   })
@@ -19,6 +21,7 @@ const { values, errors, handleSubmit, defineField, setFieldTouched } =
 const [username, usernameAttrs] = defineField('username')
 const [password, passwordAttrs] = defineField('password')
 const [repeatPassword, repeatPasswordAttrs] = defineField('repeatPassword')
+const [email, emailAttrs] = defineField('email')
 
 var formSended = false;
 const valid = ref(false);
@@ -27,6 +30,11 @@ const validateForm = handleSubmit(
   async values => {
     formSended = true;
     console.log(values)
+    const response = await axios.post(`${import.meta.env.VITE_AWS2}/user-create`, {
+      username: username.value,
+      password: password.value,
+      email: email.value
+    });
     router.push('/login')
     alert('Validation succeeded');
     console.log(username.value, password.value, repeatPassword.value)
@@ -69,6 +77,16 @@ onBeforeRouteLeave((to, from, next) => {
               </v-row>
               <v-row cols="12" md="4">
                 <span v-if="errors.username" class="error-message">{{ errors.username }}</span>
+              </v-row>
+              <v-row class="v-row">
+                <h1 class="h1">Email </h1>
+              </v-row>
+              <v-row cols="12" md="4">
+                <v-text-field v-model="email" label="Email" hide-details required autocomplete="email"
+                  @blur="setFieldTouched('email', true)" />
+              </v-row>
+              <v-row cols="12" md="4">
+                <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
               </v-row>
               <v-row class="v-row">
                 <h1 class="h1">Contraseña</h1>
