@@ -22,28 +22,49 @@ const [username, usernameAttrs] = defineField('username')
 const [password, passwordAttrs] = defineField('password')
 const [repeatPassword, repeatPasswordAttrs] = defineField('repeatPassword')
 const [email, emailAttrs] = defineField('email')
+const errorsAxios = ref<{ username?: string; password?: string; api?: string }>({});
 
 var formSended = false;
 const valid = ref(false);
 
 const validateForm = handleSubmit(
-  async values => {
-    formSended = true;
-    console.log(values)
-    const response = await axios.post(`${import.meta.env.VITE_AWS2}/user-create`, {
-      username: username.value,
-      password: password.value,
-      email: email.value
-    });
-    router.push('/login')
-    alert('Validation succeeded');
-    console.log(username.value, password.value, repeatPassword.value)
-    //Aca iria el fetch
+  async (values) => {
+    try {
+      formSended = true;
+      console.log(values);
+
+      const response = await axios.post(`${import.meta.env.VITE_AWS2}/user-create`, {
+        username: username.value,
+        password: password.value,
+        email: email.value,
+      });
+
+      router.push('/login');
+      alert('Validation succeeded');
+      console.log(username.value, password.value, repeatPassword.value);
+
+    } catch (error) {
+      // Handle axios errors here
+      if (axios.isAxiosError(error)) {
+        console.error('API request failed:', error.response?.data?.message || error.message);
+
+        // Set the error message to show it to the user
+        errorsAxios.value = { api: error.response?.data?.message || error.message };
+      } else {
+        console.error('Unexpected error:', error);
+      }
+    }
   },
   ({ errors }) => {
-    console.log(errors)
+    // Handle validation errors from the schema
+    if (errors instanceof yup.ValidationError) {
+      errorsAxios.value = errors.inner.reduce((acc: any, error: yup.ValidationError) => {
+        acc[error.path!] = error.message;
+        return acc;
+      }, {});
+    }
   },
-)
+);
 
 onBeforeRouteLeave((to, from, next) => {
   var confirmed = true;
@@ -108,6 +129,10 @@ onBeforeRouteLeave((to, from, next) => {
               <v-row cols="12" md="4">
                 <span v-if="errors.repeatPassword" class="error-message">{{ errors.repeatPassword }}</span>
               </v-row>
+              {{ values }}
+              <v-row cols="12" md="4">
+                <span v-if="errors.message" class="error-message">{{ errorsAxios }}</span>
+              </v-row>
               <v-row cols="12" md="4">
                 <v-btn class="mt-3" color="success" type="submit">Enviar</v-btn>
               </v-row>
@@ -124,6 +149,10 @@ onBeforeRouteLeave((to, from, next) => {
 </template>
 
 <style scoped>
+.error-message {
+  color: rgb(255, 60, 60);
+}
+
 .v-row {
   justify-content: center;
 }
