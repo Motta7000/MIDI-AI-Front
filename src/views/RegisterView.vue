@@ -12,7 +12,14 @@ const { values, errors, handleSubmit, defineField, setFieldTouched } =
   useForm({
     validationSchema: yup.object({
       username: yup.string().required('Ingresar Nombre'),
-      password: yup.string().required('Ingresar Contraseña').oneOf([yup.ref('repeatPassword')], 'Las contraseñas deben coincidir'),
+      password: yup.string()
+        .required('Ingresar Contraseña')
+        .min(8, 'La contraseña debe tener al menos 8 caracteres')
+        .matches(/[0-9]/, 'La contraseña debe contener al menos 1 número')
+        .matches(/[!@#$%^&*(),.?":{}|<>]/, 'La contraseña debe contener al menos 1 carácter especial')
+        .matches(/[A-Z]/, 'La contraseña debe contener al menos 1 letra mayúscula')
+        .matches(/[a-z]/, 'La contraseña debe contener al menos 1 letra minúscula')
+        .oneOf([yup.ref('repeatPassword')], 'Las contraseñas deben coincidir'),
       email: yup.string().required('Ingresar Contraseña').email('Ingrese un Mail'),
       repeatPassword: yup.string().required('Repetir contraseña').oneOf([yup.ref('password')], 'Las contraseñas deben coincidir')
     })
@@ -23,6 +30,7 @@ const [password, passwordAttrs] = defineField('password')
 const [repeatPassword, repeatPasswordAttrs] = defineField('repeatPassword')
 const [email, emailAttrs] = defineField('email')
 const errorsAxios = ref<{ username?: string; password?: string; api?: string }>({});
+const errorsValidation = ref<string>('')
 
 var formSended = false;
 const valid = ref(false);
@@ -50,6 +58,7 @@ const validateForm = handleSubmit(
 
         // Set the error message to show it to the user
         errorsAxios.value = { api: error.response?.data?.message || error.message };
+        console.log(errorsAxios.value)
       } else {
         console.error('Unexpected error:', error);
       }
@@ -58,7 +67,7 @@ const validateForm = handleSubmit(
   ({ errors }) => {
     // Handle validation errors from the schema
     if (errors instanceof yup.ValidationError) {
-      errorsAxios.value = errors.inner.reduce((acc: any, error: yup.ValidationError) => {
+      errorsValidation.value = errors.inner.reduce((acc: any, error: yup.ValidationError) => {
         acc[error.path!] = error.message;
         return acc;
       }, {});
@@ -131,7 +140,7 @@ onBeforeRouteLeave((to, from, next) => {
               </v-row>
               {{ values }}
               <v-row cols="12" md="4">
-                <span v-if="errors.message" class="error-message">{{ errorsAxios }}</span>
+                <span v-if="errorsAxios" class="error-message">{{ errorsAxios.api }}</span>
               </v-row>
               <v-row cols="12" md="4">
                 <v-btn class="mt-3" color="success" type="submit">Enviar</v-btn>
