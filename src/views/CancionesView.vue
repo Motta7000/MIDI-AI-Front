@@ -1,12 +1,15 @@
 <script setup lang="ts">
 
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
 import rawSongs from '../assets/data/songs.json'
 import TdCanciones from '../components/TdCanciones.vue'
 import router from '@/router';
 import axios from 'axios';
 import Loading from '@/components/Loading.vue';
 import { toast, type ToastOptions } from 'vue3-toastify';
+import { useUserStore } from '@/stores/counter'
+import { Icon } from '@iconify/vue/dist/iconify.js';
+const userStore = useUserStore();
 
 const emit = defineEmits<{
   (e: 'playSong', song: {
@@ -25,7 +28,10 @@ const emit = defineEmits<{
   }): void
 }>();
 
-const songs = ref()
+const songs = reactive({
+  array: [] as any[],
+  loading: true
+})
 function playSong(S3Id: number) {
   emit('playSong', songs.value.find((s: { S3Id: number; }) => s.S3Id === S3Id));
 
@@ -35,18 +41,21 @@ function downloadSong(S3Id: number) {
 }
 async function fetchSongs() {
   try {
+    songs.loading = true;
     const awsUrl = import.meta.env.VITE_AWS;
     console.log(`${awsUrl}/songs`)
     const response = await axios.get(`${awsUrl}/songs`, {
       params: {
-        UserId: 'user1234'
+        UserId: userStore.getUsername()
       }
     });
-    songs.value = response.data;
-    console.log(songs.value)
+    songs.array = response.data;
+    console.log(songs.array)
+    songs.loading = false;
   } catch (error) {
     console.error('Failed to fetch songs:', error);
     toast.error((error as Error).message);
+    songs.loading = false;
   }
 }
 fetchSongs()
@@ -73,10 +82,17 @@ fetchSongs()
           </tr>
         </thead>
         <tbody class="t-body">
-          <TdCanciones v-if="songs" @playSong="playSong" @downloadSong="downloadSong" v-for="song in songs" :song="song"
-            :key="song.id">
+          <TdCanciones v-if="songs.array.length > 0" @playSong="playSong" @downloadSong="downloadSong"
+            v-for="song in songs.array" :song="song" :key="song.id">
           </TdCanciones>
-
+          <div v-else-if="songs.loading == true">
+            Cargando
+          </div>
+          <div v-else>
+            No hay Canciones
+            <Icon icon="hugeicons:file-not-found" width="384" height="384" />
+          </div>
+          {{ songs.array.length }}
         </tbody>
 
       </v-table>

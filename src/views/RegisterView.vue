@@ -123,7 +123,7 @@ onBeforeRouteLeave((to, from, next) => {
               </v-row>
               <v-row cols="12" md="4">
                 <v-text-field v-model="password" label="Contraseña" type="password" hide-details required
-                  autocomplete="new-password" @blur="setFieldTouched('password', true)" />
+                  autocomplete="password" @blur="setFieldTouched('password', true)" />
               </v-row>
               <v-row cols="12" md="4">
                 <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
@@ -133,12 +133,12 @@ onBeforeRouteLeave((to, from, next) => {
               </v-row>
               <v-row cols="12" md="4">
                 <v-text-field v-model="repeatPassword" label="Repetir Contraseña" type="password" hide-details required
-                  autocomplete="new-password" @blur="setFieldTouched('repeatPassword', true)" />
+                  autocomplete="password" @blur="setFieldTouched('repeatPassword', true)" />
               </v-row>
               <v-row cols="12" md="4">
                 <span v-if="errors.repeatPassword" class="error-message">{{ errors.repeatPassword }}</span>
               </v-row>
-              {{ values }}
+
               <v-row cols="12" md="4">
                 <span v-if="errorsAxios" class="error-message">{{ errorsAxios.api }}</span>
               </v-row>
