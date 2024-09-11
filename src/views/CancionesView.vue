@@ -92,7 +92,7 @@ fetchSongs()
             No hay Canciones
             <Icon icon="hugeicons:file-not-found" width="384" height="384" />
           </div>
-          {{ songs.array.length }}
+
         </tbody>
 
       </v-table>

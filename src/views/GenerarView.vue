@@ -1,22 +1,38 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import rawGenres from '../assets/data/genres.json';
+import { ref, computed, onMounted } from 'vue';
+import axios from 'axios';
 import { Icon } from '@iconify/vue';
 import ModalGenerarCancion from '../components/GenerarCancionCard.vue';
 
 const search = ref<string | null>(null);
+const rawGenres = ref<any[]>([]); // Store genres from API
+
+// Fetch genres from API
+const fetchGenres = async () => {
+  try {
+    const response = await axios.get('https://groljy9hi7.execute-api.us-east-1.amazonaws.com/getGenres');
+    rawGenres.value = response.data.genres;
+    console.log(rawGenres.value)
+  } catch (error) {
+    console.error('Error fetching genres:', error);
+  }
+};
+
+// Automatically fetch genres when the component is mounted
+onMounted(() => {
+  fetchGenres();
+});
 
 const filteredGenres = computed(() => {
   if (!search.value) {
-    return rawGenres;
+    return rawGenres.value;
   }
-  return rawGenres.filter(genre =>
-    genre.nombre.toLowerCase().includes(search.value!.toLowerCase())
+  return rawGenres.value.filter(genre =>
+    genre.GenreTitle.toLowerCase().includes(search.value!.toLowerCase())
   );
 });
-const emit = defineEmits<{
 
-}>();
+const emit = defineEmits<{}>();
 
 </script>
 
