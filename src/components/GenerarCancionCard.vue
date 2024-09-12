@@ -48,14 +48,14 @@ const onSubmit = handleSubmit(
     async values => {
         //Aca iria el fetch
         dialogVisible.value = false;
-        const awsUrl = import.meta.env.VITE_AWS3;
+        const VITE_AWS3 = import.meta.env.VITE_AWS3;
         router.push('/canciones')
-        const response = await axios.post(`${awsUrl}/generateSong`, {
+        const response = await axios.post(`${VITE_AWS3}/prod/generateSong`, {
             UserId: userStore.getUsername,
-            //  SongId: '1234',
+            SongId: Date.now(),
             title: values.title,
             genre: props.genre.GenreTitle,
-            BPM: values.bpm
+            bpm: values.bpm
         });
         console.log(response)
         await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 3 seconds
