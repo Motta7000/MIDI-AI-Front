@@ -5,3 +5,9 @@
 npm install
 npm run dev
 ```
+# Issues
+LOW = Tareas con baja importancia
+
+NORMAL = Tareas con importancia intermedia
+
+HIGH = Tareas con alta importancia
