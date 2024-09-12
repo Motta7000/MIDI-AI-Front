@@ -33,11 +33,11 @@ const songs = reactive({
   loading: true
 })
 function playSong(S3Id: number) {
-  emit('playSong', songs.value.find((s: { S3Id: number; }) => s.S3Id === S3Id));
+  emit('playSong', songs.array.find((s: { S3Id: number; }) => s.S3Id === S3Id));
 
 }
 function downloadSong(S3Id: number) {
-  emit('downloadSong', songs.value.find((s: { S3Id: number; }) => s.S3Id === S3Id))
+  emit('downloadSong', songs.array.find((s: { S3Id: number; }) => s.S3Id === S3Id))
 }
 async function fetchSongs() {
   try {

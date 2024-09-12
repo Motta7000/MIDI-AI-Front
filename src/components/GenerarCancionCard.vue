@@ -32,9 +32,10 @@ const [title, titleAttrs] = defineField('title')
 
 const props = defineProps<{
     genre: {
+        Description: any;
+        GenreTitle: string;
         id: number,
-        nombre: string,
-        descripcion: string
+        nombre: string
     }
 }>();
 
@@ -47,7 +48,7 @@ const onSubmit = handleSubmit(
     async values => {
         //Aca iria el fetch
         dialogVisible.value = false;
-        const awsUrl = import.meta.env.VITE_AWS;
+        const awsUrl = import.meta.env.VITE_AWS3;
         router.push('/canciones')
         const response = await axios.post(`${awsUrl}/generateSong`, {
             UserId: userStore.getUsername,
