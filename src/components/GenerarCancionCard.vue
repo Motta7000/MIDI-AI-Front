@@ -54,7 +54,7 @@ const onSubmit = handleSubmit(
             UserId: userStore.getUsername,
             SongId: Date.now(),
             title: values.title,
-            genre: props.genre.GenreTitle,
+            genre: props.genre.GenreTitle.replace(/\s+/g, '-'),
             bpm: values.bpm
         });
         console.log(response)

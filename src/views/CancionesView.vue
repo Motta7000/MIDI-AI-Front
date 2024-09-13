@@ -73,7 +73,7 @@ fetchSongs()
               <h2>Nombre</h2>
             </th>
             <th class="text-left">
-              Genero
+              Género
             </th>
             <th class="text-left">
               Tempo
@@ -85,17 +85,16 @@ fetchSongs()
           <TdCanciones v-if="songs.array.length > 0" @playSong="playSong" @downloadSong="downloadSong"
             v-for="song in songs.array" :song="song" :key="song.id">
           </TdCanciones>
-          <div v-else-if="songs.loading == true">
-            Cargando
-          </div>
-          <div v-else>
+          <div v-else-if="songs.loading == false">
             No hay Canciones
-            <Icon icon="hugeicons:file-not-found" width="384" height="384" />
+            <Icon icon="hugeicons:file-not-found" width="50" height="50" />
           </div>
-
         </tbody>
 
       </v-table>
+      <div class="loading" v-if="songs.loading == true">
+        <Loading :white="true"></Loading>
+      </div>
       <Loading v-if="!songs" :white="true">aaa</Loading>
     </div>
 
@@ -104,6 +103,13 @@ fetchSongs()
 </template>
 
 <style scoped>
+.t-body {}
+
+.loading {
+  display: flex;
+  justify-content: center;
+}
+
 .flex-td {
   display: flex;
   align-items: center;
@@ -144,7 +150,6 @@ fetchSongs()
 
 
 }
-
 @media (max-width: 1024px) {
   .body-container {
     width: 90% !important;
