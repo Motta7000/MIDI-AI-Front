@@ -54,17 +54,34 @@ async function fetchSongMidi(object_key: string, UserId: string) {
   try {
     const awsUrl = import.meta.env.VITE_AWS;
     console.log(`${awsUrl}/songs`)
-    const response = await axios.post(`${import.meta.env.VITE_AWS}/prod/songs`, {
+    const objectKey = object_key.split('/').pop();
+    console.log({ UserId: 'user1234', object_key: object_key })
+
+    const response = await axios.post(`${import.meta.env.VITE_AWS}/songs`, {
       UserId: 'user1234',
-      object_key: object_key
+      object_key: objectKey
+    }, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
+
     // Ensure the response type is handled as a binary stream
     // Convert ArrayBuffer to Blob
+    console.log(response.data)
     return response.data
 
   } catch (error) {
-    console.error('Failed to fetch songs:', error);
-    toast.error((error as Error).message);
+    if (error.response) {
+      console.error('Error Response Data:', error.response.data);
+      console.error('Error Response Status:', error.response.status);
+      console.error('Error Response Headers:', error.response.headers);
+    } else if (error.request) {
+      console.error('Error Request:', error.request);
+    } else {
+      console.error('Error Message:', error.message);
+    }
+    console.error('Error Config:', error.config);
   }
 }
 function blobToBase64(blob: Blob): Promise<string> {

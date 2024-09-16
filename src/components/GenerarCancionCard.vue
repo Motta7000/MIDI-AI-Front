@@ -46,27 +46,58 @@ const emit = defineEmits<{
 const dialogVisible = ref(false)
 const onSubmit = handleSubmit(
     async values => {
-        //Aca iria el fetch
-        dialogVisible.value = false;
-        const VITE_AWS3 = import.meta.env.VITE_AWS3;
-        router.push('/canciones')
-        const response = await axios.post(`${VITE_AWS3}/prod/generateSong`, {
-            UserId: userStore.getUsername,
-            SongId: Date.now(),
-            title: values.title,
-            genre: props.genre.GenreTitle.replace(/\s+/g, '-'),
-            bpm: values.bpm
-        });
-        console.log(response)
-        await new Promise(resolve => setTimeout(resolve, 100)); // Wait for 3 seconds
-        toast.success('La Cancion fue generada exitosamente')
+        try {
+            const VITE_AWS3 = import.meta.env.VITE_AWS3;
+            console.log({
+                UserId: userStore.getUsername(),
+                SongId: Date.now(),
+                title: values.title,
+                genre: props.genre.GenreTitle.replace(/\s+/g, '-'),
+                bpm: values.bpm
+            })
+            const loadingToastId = toast.loading('Generando Canción...', {
+                autoClose: false, // Prevent it from closing automatically
+                closeOnClick: false, // Don't allow users to close it
+            });
+            const response = await axios.post(`${VITE_AWS3}/prod/generateSong`, {
+                UserId: userStore.getUsername(),
+                SongId: Date.now(),
+                title: values.title,
+                genre: props.genre.GenreTitle.replace(/\s+/g, '-'),
+                bpm: values.bpm
+            });
+            console.log('Response:', response);
+            router.push('/canciones');
+            var seconds = 1
+            seconds = seconds * 1000
+            await new Promise(resolve => setTimeout(resolve, seconds));
+            toast.success(response.data.message);
+            // Navigate after successful submission
 
+        } catch (error) {
+            console.error('Error details:', error);
+            if (error.response) {
+                // Server responded with a status other than 2xx
+                console.error('Response data:', error.response.data);
+                console.error('Response status:', error.response.status);
+                console.error('Response headers:', error.response.headers);
+                toast.error(`Error: ${error.response.data.message || 'Something went wrong'}`);
+            } else if (error.request) {
+                // No response received
+                console.error('Request data:', error.request);
+                toast.error('No response received from the server');
+            } else {
+                // Other errors
+                console.error('Error message:', error.message);
+                toast.error(`Error: ${error.message}`);
+            }
+        }
     },
     ({ errors }) => {
-        console.log(errors)
+        console.log('Validation errors:', errors);
         const errorMessages = Object.values(errors).join(', ');
         toast.error(errorMessages);
-    },
+    }
 );
 </script>
 <template>
