@@ -5,7 +5,7 @@ import { Icon } from '@iconify/vue';
 import MidiPlayer from './components/MidiPlayer.vue';
 import { useUserStore } from '@/stores/counter';
 import router from './router';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { downloadFile } from './functions/functions';
 import { toast } from 'vue3-toastify';
 
@@ -71,17 +71,20 @@ async function fetchSongMidi(object_key: string, UserId: string) {
     console.log(response.data)
     return response.data
 
-  } catch (error) {
-    if (error.response) {
-      console.error('Error Response Data:', error.response.data);
-      console.error('Error Response Status:', error.response.status);
-      console.error('Error Response Headers:', error.response.headers);
-    } else if (error.request) {
-      console.error('Error Request:', error.request);
-    } else {
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      // The error is an AxiosError
+      console.error('Error Response Data:', error.response?.data);
+      console.error('Error Response Status:', error.response?.status);
+      console.error('Error Response Headers:', error.response?.headers);
+    } else if (error instanceof Error) {
+      // The error is a standard Error
       console.error('Error Message:', error.message);
+    } else {
+      // Handle unknown error types
+      console.error('An unknown error occurred:', error);
     }
-    console.error('Error Config:', error.config);
+    console.error('Error Config:', (error as AxiosError).config);
   }
 }
 function blobToBase64(blob: Blob): Promise<string> {

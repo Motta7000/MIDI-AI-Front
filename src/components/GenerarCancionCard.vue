@@ -59,7 +59,7 @@ const onSubmit = handleSubmit(
                 autoClose: false, // Prevent it from closing automatically
                 closeOnClick: false, // Don't allow users to close it
             });
-            const response = await axios.post(`${VITE_AWS3}/prod/generateSong`, {
+            const response = await axios.post(`${VITE_AWS3}/generateSong`, {
                 UserId: userStore.getUsername(),
                 SongId: Date.now(),
                 title: values.title,
@@ -74,22 +74,23 @@ const onSubmit = handleSubmit(
             toast.success(response.data.message);
             // Navigate after successful submission
 
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Error details:', error);
-            if (error.response) {
-                // Server responded with a status other than 2xx
-                console.error('Response data:', error.response.data);
-                console.error('Response status:', error.response.status);
-                console.error('Response headers:', error.response.headers);
-                toast.error(`Error: ${error.response.data.message || 'Something went wrong'}`);
-            } else if (error.request) {
-                // No response received
-                console.error('Request data:', error.request);
-                toast.error('No response received from the server');
-            } else {
-                // Other errors
+
+            if (axios.isAxiosError(error)) {
+                // The error is an AxiosError
+                console.error('Response data:', error.response?.data);
+                console.error('Response status:', error.response?.status);
+                console.error('Response headers:', error.response?.headers);
+                toast.error(`Error: ${error.response?.data.message || 'Something went wrong'}`);
+            } else if (error instanceof Error) {
+                // The error is a standard Error
                 console.error('Error message:', error.message);
                 toast.error(`Error: ${error.message}`);
+            } else {
+                // Handle unknown error types
+                console.error('An unknown error occurred:', error);
+                toast.error('An unknown error occurred');
             }
         }
     },

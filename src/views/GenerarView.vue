@@ -3,9 +3,11 @@ import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 import { Icon } from '@iconify/vue';
 import ModalGenerarCancion from '../components/GenerarCancionCard.vue';
+import Loading from '@/components/Loading.vue';
 
 const search = ref<string | null>(null);
 const rawGenres = ref<any[]>([]); // Store genres from API
+const loading = ref<boolean>(true)
 
 // Fetch genres from API
 const fetchGenres = async () => {
@@ -15,6 +17,9 @@ const fetchGenres = async () => {
     console.log(rawGenres.value)
   } catch (error) {
     console.error('Error fetching genres:', error);
+  }
+  finally {
+    loading.value = false;
   }
 };
 
@@ -51,10 +56,13 @@ const emit = defineEmits<{}>();
         <v-text-field v-model="search" label="Género" hide-details required></v-text-field>
         <Icon icon="pepicons-pencil:loop" width="72" height="72" style="color: white" />
       </div>
-      <div class="grid pt-5">
+      <div v-if="filteredGenres && filteredGenres.length > 0" class="grid pt-5">
         <ModalGenerarCancion v-for="genre in filteredGenres" :key="genre.id" :genre="genre" class="mx-auto my-8 v-card"
           elevation="16" max-width="344" />
       </div>
+      <Loading :white="true" v-else>
+
+      </loading>
     </div>
   </div>
 </template>

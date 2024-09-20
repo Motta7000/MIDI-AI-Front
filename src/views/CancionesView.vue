@@ -83,27 +83,39 @@ fetchSongs()
         </thead>
         <tbody class="t-body">
           <TdCanciones v-if="songs.array.length > 0" @playSong="playSong" @downloadSong="downloadSong"
-            v-for="song in songs.array" :song="song" :key="song.id">
+            v-for="song in songs.array" :song="song" :key="song.id" @reFetchSongs="fetchSongs">
           </TdCanciones>
-          <div v-else-if="songs.loading == false">
-            No hay Canciones
-            <Icon icon="hugeicons:file-not-found" width="50" height="50" />
-          </div>
         </tbody>
+        <tbody v-if="songs.array.length == 0 && songs.loading == false" class="t-body-no-files">
 
+        </tbody>
       </v-table>
       <div class="loading" v-if="songs.loading == true">
         <Loading :white="true"></Loading>
       </div>
-      <Loading v-if="!songs" :white="true">aaa</Loading>
+      <div class="no-songs" v-if="songs.array.length == 0 && songs.loading == false">
+
+        <Icon icon="hugeicons:file-not-found" width="100" height="100" />
+        <h3>No hay Canciones</h3>
+      </div>
     </div>
-
   </div>
-
 </template>
 
 <style scoped>
-.t-body {}
+.no-songs {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 20rem;
+}
+
+.t-body-no-files {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
 
 .loading {
   display: flex;
@@ -150,6 +162,7 @@ fetchSongs()
 
 
 }
+
 @media (max-width: 1024px) {
   .body-container {
     width: 90% !important;

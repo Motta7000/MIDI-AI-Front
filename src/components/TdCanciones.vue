@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { Icon } from '@iconify/vue';
 import axios from 'axios';
 import { useUserStore } from '@/stores/counter'
+import { toast } from 'vue3-toastify';
 const userStore = useUserStore();
 
 const props = defineProps<{
@@ -20,6 +21,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'playSong', S3Id: number): void;
     (e: 'downloadSong', S3Id: number): void;
+    (e: 'reFetchSongs'): void;
 }>();
 
 // Reactive reference for controlling the dialog
@@ -29,13 +31,50 @@ const dialog = ref(false);
 async function openDeleteWindow() {
     dialog.value = true;  // Show the dialog when the icon is clicked
 }
-function deleteSong() {
-    const res = axios.delete(import.meta.env.VITE_AWS + '/songs', {
-        UserId: userStore.getUsername(),
-        SongId: props.song.SongId,
+
+
+
+async function deleteSong() {
+    const loadingToastId = ref(null);
+
+    try {
+        // Show a loading toast
+        loadingToastId.value = toast.loading('Deleting song...', {
+            timeout: false, // Keep the toast visible until manually dismissed
+        });
+
+        console.log('Deleting Song:');
+        console.log({
+            UserId: userStore.getUsername(),
+            SongId: props.song.SongId,
+        });
+
+        const res = await axios.delete(`${import.meta.env.VITE_AWS}/songs`, {
+            data: {
+                UserId: userStore.getUsername(),
+                SongId: props.song.SongId,
+            },
+        });
+
+        // Dismiss the loading toast
+        toast.remove(loadingToastId.value);
+
+        // Show a success toast
+        toast.success('Song deleted successfully!');
+
+        // Emit event to re-fetch songs
+        emit('reFetchSongs');
+    } catch (error) {
+        // Dismiss the loading toast
+        toast.dismiss(loadingToastId.value);
+
+        // Show an error toast
+        toast.error(`Failed to delete song: ${error.message}`);
+        console.error('Error:', error);
     }
-    )
 }
+
+
 </script>
 
 <template>
