@@ -35,12 +35,13 @@ async function openDeleteWindow() {
 
 
 async function deleteSong() {
-    const loadingToastId = ref(null);
+    type ToastId = string | number;
+    const loadingToastId = ref<ToastId | null>(null);
+
 
     try {
         // Show a loading toast
         loadingToastId.value = toast.loading('Deleting song...', {
-            timeout: false, // Keep the toast visible until manually dismissed
         });
 
         console.log('Deleting Song:');
@@ -66,10 +67,19 @@ async function deleteSong() {
         emit('reFetchSongs');
     } catch (error) {
         // Dismiss the loading toast
-        toast.dismiss(loadingToastId.value);
+        if (loadingToastId.value) {
+            toast.remove(loadingToastId.value);
+        }
 
         // Show an error toast
-        toast.error(`Failed to delete song: ${error.message}`);
+        if (axios.isAxiosError(error)) {
+            toast.error(`Failed to delete song: ${error.response?.data.message || 'Unknown error'}`);
+        } else if (error instanceof Error) {
+            toast.error(`Failed to delete song: ${error.message}`);
+        } else {
+            toast.error('An unknown error occurred');
+        }
+
         console.error('Error:', error);
     }
 }
