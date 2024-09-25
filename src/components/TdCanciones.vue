@@ -44,7 +44,7 @@ async function deleteSong() {
         loadingToastId.value = toast.loading('Deleting song...', {
         });
 
-        console.log('Deleting Song:');
+        console.log('Eliminando canción');
         console.log({
             UserId: userStore.getUsername(),
             SongId: props.song.SongId,
@@ -61,7 +61,7 @@ async function deleteSong() {
         toast.remove(loadingToastId.value);
 
         // Show a success toast
-        toast.success('Song deleted successfully!');
+        toast.success('Canción eliminada correctamente');
 
         // Emit event to re-fetch songs
         emit('reFetchSongs');
@@ -108,12 +108,12 @@ async function deleteSong() {
     <!-- Confirmation dialog -->
     <v-dialog v-model="dialog" max-width="500px">
         <v-card>
-            <v-card-title class="headline">Confirm Deletion</v-card-title>
-            <v-card-text>Are you sure you want to delete this record?</v-card-text>
+            <v-card-title class="headline">Confirmar</v-card-title>
+            <v-card-text>¿Estas Seguro que deseas eliminar esta canción?</v-card-text>
             <v-card-actions>
-                <v-btn color="red darken-1" text @click="dialog = false">Cancel</v-btn>
+                <v-btn color="red darken-1" text @click="dialog = false">Cancelar</v-btn>
                 <v-btn color="green darken-1" text
-                    @click="dialog = false; deleteSong() /* Call your delete function here */">Confirm</v-btn>
+                    @click="dialog = false; deleteSong() /* Call your delete function here */">Si</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
