@@ -48,12 +48,14 @@ const onSubmit = handleSubmit(
     async values => {
         try {
             const VITE_AWS3 = import.meta.env.VITE_AWS3;
+            let bpmInput: number = 100;
+            values.bpm == null || values.bpm == undefined ? bpmInput = 100 : bpmInput = bpm.value;
             console.log({
                 UserId: userStore.getUsername(),
                 SongId: Date.now(),
                 title: values.title,
                 genre: props.genre.GenreTitle.replace(/\s+/g, '-'),
-                bpm: values.bpm
+                bpm: bpmInput
             })
             const loadingToastId = toast.loading('Generando Canción...', {
                 autoClose: false, // Prevent it from closing automatically
@@ -64,17 +66,19 @@ const onSubmit = handleSubmit(
                 SongId: Date.now(),
                 title: values.title,
                 genre: props.genre.GenreTitle.replace(/\s+/g, '-'),
-                bpm: values.bpm
+                bpm: bpmInput
             });
             console.log('Response:', response);
             router.push('/canciones');
             var seconds = 1
             seconds = seconds * 1000
             await new Promise(resolve => setTimeout(resolve, seconds));
+            toast.remove(loadingToastId);
             toast.success(response.data.message);
             // Navigate after successful submission
 
         } catch (error: unknown) {
+            toast.remove();
             console.error('Error details:', error);
 
             if (axios.isAxiosError(error)) {
