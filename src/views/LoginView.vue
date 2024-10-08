@@ -8,8 +8,8 @@ import { useUserStore } from '@/stores/counter'
 // Define YUP validation schema
 const show1 = ref(false)
 const schema = yup.object().shape({
-  username: yup.string().required('Username is required'),
-  password: yup.string().required('Password is required')
+  username: yup.string().required('Campo Obligatorio'),
+  password: yup.string().required('Campo Obligatorio')
 });
 const userStore = useUserStore();
 // Form data
@@ -88,7 +88,7 @@ const validateForm = async () => {
                 </h1>
               </v-row>
               <v-row cols="12" md="4">
-                <v-text-field v-model="username" :rules="usernameRules" label="First name" hide-details
+                <v-text-field v-model="username" :rules="usernameRules" label="Nombre de Usuario" hide-details
                   required></v-text-field>
 
               </v-row>
@@ -104,7 +104,7 @@ const validateForm = async () => {
 
                 <v-text-field v-model="password" :append-icon="show1 ? 'iconamoon:profile' : 'iconamoon:profile'"
                   :rules="passwordRules" :type="show1 ? 'text' : 'password'" hint="At least 8 characters"
-                  label="Password" name="input-10-1" counter @click:append="show1 = !show1">
+                  label="Contraseña" name="input-10-1" counter @click:append="show1 = !show1">
                 </v-text-field>
 
 
@@ -120,6 +120,9 @@ const validateForm = async () => {
               </v-row>
               <v-row cols="12" md="4">
                 <RouterLink class="mt-1" to="/register">¿No tienes cuenta? Registrate aqui</RouterLink>
+              </v-row>
+              <v-row cols="12" md="4">
+                <RouterLink class="mt-1" to="/register">¿No Recuerdas tu Contraseña? Recuperala Aqui</RouterLink>
               </v-row>
 
             </v-col>

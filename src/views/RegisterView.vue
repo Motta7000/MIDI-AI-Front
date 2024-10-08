@@ -20,7 +20,7 @@ const { values, errors, handleSubmit, defineField, setFieldTouched } =
         .matches(/[A-Z]/, 'La contraseña debe contener al menos 1 letra mayúscula')
         .matches(/[a-z]/, 'La contraseña debe contener al menos 1 letra minúscula')
         .oneOf([yup.ref('repeatPassword')], 'Las contraseñas deben coincidir'),
-      email: yup.string().required('Ingresar Contraseña').email('Ingrese un Mail'),
+      email: yup.string().required('Ingresar E-mail').email('Ingrese un E-mail'),
       repeatPassword: yup.string().required('Repetir contraseña').oneOf([yup.ref('password')], 'Las contraseñas deben coincidir')
     })
   })
