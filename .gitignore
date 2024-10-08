@@ -30,3 +30,4 @@ coverage
 *.tsbuildinfo
 public/soundfonts/cloudcones.sf2
 .env
+como levantar ambiente.txt
