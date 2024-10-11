@@ -7,6 +7,7 @@ import router from '@/router';
 import { onBeforeRouteLeave } from 'vue-router';
 import { useForm } from 'vee-validate';
 import axios from 'axios';
+import { toast } from 'vue3-toastify';
 
 const { values, errors, handleSubmit, defineField, setFieldTouched } =
   useForm({
@@ -34,10 +35,11 @@ const errorsValidation = ref<string>('')
 
 var formSended = false;
 const valid = ref(false);
-
+var loadingId = ref<number>();
 const validateForm = handleSubmit(
   async (values) => {
     try {
+      loadingId.value = toast.loading('Cargando...')
       formSended = true;
       console.log(values);
 
@@ -48,17 +50,27 @@ const validateForm = handleSubmit(
       });
 
       router.push('/login');
-      alert('Validation succeeded');
+      setTimeout(() => {
+        toast.success('¡Cuenta creada correctamente!');
+      }, 800);
       console.log(username.value, password.value, repeatPassword.value);
 
     } catch (error) {
       // Handle axios errors here
+      toast.remove(loadingId.value)
+
       if (axios.isAxiosError(error)) {
         console.error('API request failed:', error.response?.data?.message || error.message);
 
         // Set the error message to show it to the user
-        errorsAxios.value = { api: error.response?.data?.message || error.message };
-        console.log(errorsAxios.value)
+        if (error.response?.data?.message == 'User already exists') {
+          errorsAxios.value = { api: 'El nombre de usuario ya esta siendo utilizado' }
+        } else {
+          errorsAxios.value = { api: error.response?.data?.message || error.message };
+          console.log(errorsAxios.value)
+        }
+
+
       } else {
         console.error('Unexpected error:', error);
       }
@@ -79,7 +91,7 @@ onBeforeRouteLeave((to, from, next) => {
   var confirmed = true;
   console.log(username.value, password.value, repeatPassword.value)
   if (!formSended && (username.value != '' || username.value != undefined || password.value != '' || password.value != undefined || repeatPassword.value != '') && repeatPassword.value != undefined) {
-    confirmed = confirm('You have unsaved changes. Are you sure you want to leave?');
+    confirmed = confirm('Tienes cambios sin guardar ¿Estás seguro de que quieres continuar?');
   }
   if (confirmed) {
     next();

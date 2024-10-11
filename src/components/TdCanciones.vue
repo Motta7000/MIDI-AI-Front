@@ -108,7 +108,7 @@ async function deleteSong() {
     <!-- Confirmation dialog -->
     <v-dialog v-model="dialog" max-width="500px">
         <v-card>
-            <v-card-title class="headline">Confirmar</v-card-title>
+            <v-card-title class="headline">Eliminar "{{ props.song?.title }}"</v-card-title>
             <v-card-text>¿Estas Seguro que deseas eliminar esta canción?</v-card-text>
             <v-card-actions>
                 <v-btn color="red darken-1" text @click="dialog = false">Cancelar</v-btn>

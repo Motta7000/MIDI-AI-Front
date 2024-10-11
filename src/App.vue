@@ -9,6 +9,7 @@ import axios, { AxiosError } from 'axios';
 import { downloadFile } from './functions/functions';
 import { toast } from 'vue3-toastify';
 
+
 const userStore = useUserStore();
 const storedUsername = computed(() => userStore.username);
 
@@ -24,6 +25,7 @@ const volume = ref(1)
 const volumeInput = ref(100)
 const aux = ref()
 
+
 const playSong = async (song: { S3Id: string, nombre: string, genero: string, tempo: string, midi: string, SongId: number }) => {
   console.log(song)
   songData.value = song;
@@ -37,7 +39,7 @@ const playSong = async (song: { S3Id: string, nombre: string, genero: string, te
       currentPlayingId.value = song.SongId;
       songIsPlaying.value = true;
 
-      aux.value = await fetchSongMidi(song.S3Id, 'user1234')
+      aux.value = await fetchSongMidi(song.S3Id, userStore.getUsername())
       songApp.value = { midi: '' }
       songApp.value.midi = aux.value.base64_content
       console.log(songApp.value)
@@ -46,7 +48,7 @@ const playSong = async (song: { S3Id: string, nombre: string, genero: string, te
 };
 
 const downloadSong = async (song: { S3Id: string, title: string, genero: string, tempo: string, midi: string, SongId: number }) => {
-  aux.value = await fetchSongMidi(song.S3Id, 'user1234')
+  aux.value = await fetchSongMidi(song.S3Id, userStore.getUsername())
   aux.value = aux.value.base64_content
   downloadFile(aux.value, song.title + ".mid")
 }
@@ -55,10 +57,10 @@ async function fetchSongMidi(object_key: string, UserId: string) {
     const awsUrl = import.meta.env.VITE_AWS;
     console.log(`${awsUrl}/songs`)
     const objectKey = object_key.split('/').pop();
-    console.log({ UserId: 'user1234', object_key: object_key })
+    console.log({ UserId: userStore.getUsername(), object_key: object_key })
 
     const response = await axios.post(`${import.meta.env.VITE_AWS}/songs`, {
-      UserId: 'user1234',
+      UserId: userStore.getUsername(),
       object_key: objectKey
     }, {
       headers: {
@@ -73,15 +75,18 @@ async function fetchSongMidi(object_key: string, UserId: string) {
 
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
+      toast.error('No se pudo obtener la canción')
       // The error is an AxiosError
       console.error('Error Response Data:', error.response?.data);
       console.error('Error Response Status:', error.response?.status);
       console.error('Error Response Headers:', error.response?.headers);
     } else if (error instanceof Error) {
       // The error is a standard Error
+      toast.error(error.message)
       console.error('Error Message:', error.message);
     } else {
       // Handle unknown error types
+      toast.error(error)
       console.error('An unknown error occurred:', error);
     }
     console.error('Error Config:', (error as AxiosError).config);

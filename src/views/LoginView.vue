@@ -5,6 +5,8 @@ import * as yup from 'yup';
 import { Icon } from '@iconify/vue';
 import router from '@/router';
 import { useUserStore } from '@/stores/counter'
+import { toast } from 'vue3-toastify';
+
 // Define YUP validation schema
 const show1 = ref(false)
 const schema = yup.object().shape({
@@ -28,9 +30,10 @@ const passwordRules = [
 
 // Validate form
 import axios from 'axios';
-
+var loadingId = ref<number>();
 const validateForm = async () => {
   try {
+    loadingId.value = toast.loading('Cargando...')
     // Validate the form input using the schema
     await schema.validate({ username: username.value, password: password.value }, { abortEarly: false });
     errors.value = {};
@@ -43,13 +46,18 @@ const validateForm = async () => {
 
     // If the response is successful, save the username and navigate to the canciones page
     if (response.status === 200) {
+      setTimeout(() => {
+        toast.success('¡Sesión iniciada correctamente!');
+      }, 800);
       userStore.setUsername(username.value); // Save the username in the store
       router.push('/canciones');
+
     }
     else {
 
     }
   } catch (err) {
+    toast.remove(loadingId.value)
     // Handle validation errors from the schema
     if (err instanceof yup.ValidationError) {
       errors.value = err.inner.reduce((acc: any, error: yup.ValidationError) => {
@@ -88,8 +96,8 @@ const validateForm = async () => {
                 </h1>
               </v-row>
               <v-row cols="12" md="4">
-                <v-text-field v-model="username" :rules="usernameRules" label="Nombre de Usuario" hide-details
-                  required></v-text-field>
+                <v-text-field v-model="username" :rules="usernameRules" label="Nombre de Usuario" hide-details required
+                  @keyup.enter="validateForm"></v-text-field>
 
               </v-row>
               <v-row cols="12" md="4">
@@ -104,7 +112,8 @@ const validateForm = async () => {
 
                 <v-text-field v-model="password" :append-icon="show1 ? 'iconamoon:profile' : 'iconamoon:profile'"
                   :rules="passwordRules" :type="show1 ? 'text' : 'password'" hint="At least 8 characters"
-                  label="Contraseña" name="input-10-1" counter @click:append="show1 = !show1">
+                  label="Contraseña" name="input-10-1" counter @click:append="show1 = !show1"
+                  @keyup.enter="validateForm">
                 </v-text-field>
 
 
