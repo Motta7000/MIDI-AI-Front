@@ -56,7 +56,9 @@ const validateForm = handleSubmit(
       router.push('/login')
       // Manejar éxito (redirigir a inicio de sesión, etc.)
     } catch (error) {
+      console.error(error)
       console.error('Error al confirmar el registro:', error.response ? error.response.data : error.message);
+      toast.error(error.response.data.message)
       // Manejar error (mostrar mensaje de error)
     }
 

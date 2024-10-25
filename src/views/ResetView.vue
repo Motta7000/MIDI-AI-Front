@@ -11,7 +11,7 @@ const route = useRoute();
 
 const { values, errors, handleSubmit, defineField, setFieldTouched } = useForm({
   validationSchema: yup.object({
-    username: yup.string().required('Ingresar el nombre de usuario'),
+
     confirmationCode: yup.string()
       .required('Ingresar el código de confirmación')
       .min(6, 'El código debe tener al menos 6 caracteres'),
@@ -28,7 +28,6 @@ const { values, errors, handleSubmit, defineField, setFieldTouched } = useForm({
   })
 });
 
-const [username, usernameAttrs] = defineField('username');
 const [confirmationCode, confirmationCodeAttrs] = defineField('confirmationCode');
 const [newPassword, newPasswordAttrs] = defineField('newPassword');
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword');
@@ -38,7 +37,7 @@ const errorsValidation = ref<string>('');
 const validateForm = handleSubmit(async (values) => {
   const datos = {
     ClientId: import.meta.env.VITE_CLIENT_ID,
-    Username: values.username,
+    Username: route.query.username,
     ConfirmationCode: values.confirmationCode,
     Password: values.newPassword,
   };
@@ -91,21 +90,12 @@ const validateForm = handleSubmit(async (values) => {
               </v-row>
               <v-row cols="12" md="4">
                 <v-text-field v-model="confirmationCode" label="Codigo que enviamos a su email" hide-details required
-                  autocomplete="email" @blur="setFieldTouched('email', true)" />
+                  autocomplete="co" @blur="setFieldTouched('email', true)" />
               </v-row>
               <v-row cols="12" md="4">
                 <span v-if="errors.confirmationCode" class="error-message">{{ errors.confirmationCode }}</span>
               </v-row>
-              <v-row class="v-row">
-                <h1 class="h1">Usuario </h1>
-              </v-row>
-              <v-row cols="12" md="4">
-                <v-text-field v-model="username" label="Nombre de usuario" hide-details required autocomplete="username"
-                  @blur="setFieldTouched('username', true)" />
-              </v-row>
-              <v-row cols="12" md="4">
-                <span v-if="errors.username" class="error-message">{{ errors.username }}</span>
-              </v-row>
+
 
               <v-row class="v-row">
                 <h1 class="h1">Contraseña</h1>
@@ -122,7 +112,7 @@ const validateForm = handleSubmit(async (values) => {
               </v-row>
               <v-row cols="12" md="4">
                 <v-text-field v-model="confirmPassword" label="Repetir Contraseña" type="password" hide-details required
-                  autocomplete="password" @blur="setFieldTouched('repeatPassword', true)" />
+                  autocomplete="new-password" @blur="setFieldTouched('repeatPassword', true)" />
               </v-row>
               <v-row cols="12" md="4">
                 <span v-if="errors.confirmPassword" class="error-message">{{ errors.confirmPassword }}</span>

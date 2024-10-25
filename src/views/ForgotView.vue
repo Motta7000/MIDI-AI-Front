@@ -54,7 +54,7 @@ const validateForm = handleSubmit(
         });
       }, 800);
 
-      router.push('/reset')
+      router.push(`/reset?username=${encodeURIComponent(username.value)}`);
       // Aquí puedes redirigir al usuario a la página donde ingresa el código
     } catch (error) {
       console.error('Error al iniciar el restablecimiento:', error.response ? error.response.data : error.message);

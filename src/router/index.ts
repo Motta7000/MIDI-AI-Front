@@ -78,7 +78,7 @@ const router = createRouter({
 // Navigation guard
 
 router.beforeEach(async (to, from, next) => {
-  if (to.path !== '/login' && to.path != '/register') {
+  if (to.path !== '/login' && to.path != '/register' &&  to.path != '/confirmar' &&  to.path != '/reset' && to.path != '/forgot' ) {
     const userStore = useUserStore();
     const storedUsername = computed(() => userStore.username);
     if(storedUsername.value == '')
