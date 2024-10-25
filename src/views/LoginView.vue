@@ -131,7 +131,7 @@ const validateForm = async () => {
                 <RouterLink class="mt-1" to="/register">¿No tienes cuenta? Registrate aqui</RouterLink>
               </v-row>
               <v-row cols="12" md="4">
-                <RouterLink class="mt-1" to="/register">¿No Recuerdas tu Contraseña? Recuperala Aqui</RouterLink>
+                <RouterLink class="mt-1" to="/forgot">¿No Recuerdas tu Contraseña? Recuperala Aqui</RouterLink>
               </v-row>
 
             </v-col>

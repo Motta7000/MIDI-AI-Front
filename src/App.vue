@@ -158,7 +158,9 @@ function onVolumeChange(event: Event) {
 
 <template>
   <div class="main-component">
-    <div v-if="route.path != '/login' && route.path != '/register'" class="collum-container">
+    <div
+      v-if="route.path != '/login' && route.path != '/register' && route.path != '/confirmar' && route.path != '/forgot' && route.path != '/reset'"
+      class="collum-container">
       <div class="top-section">
         <Icon class="icon mt-5 margin-top" icon="iconamoon:profile" width="70" height="70" />
         <p class="mt-5 px-3 margin-top">¡Bienvenido {{ storedUsername }}!</p>
@@ -172,7 +174,8 @@ function onVolumeChange(event: Event) {
   </div>
   <MidiPlayer :volume="volume" @updateDuration="updateDuration" @playerReady="" @updateCurrentTime="onUpdateCurrentTime"
     v-if="songApp" :song="songApp" :songIsPlaying="songIsPlaying" :seekTo="seekTo" />
-  <header class="header" v-if="route.path != '/login' && route.path != '/register'">
+  <header class="header"
+    v-if="route.path != '/login' && route.path != '/register' && route.path != '/confirmar' && route.path != '/forgot' && route.path != '/reset'">
     <div class="left-section">
       <div class="bottom-section">
         <Icon class="song-icon my-5 mr-1" icon="entypo:note" width="32" height="32" style="color: white" />

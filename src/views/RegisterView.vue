@@ -49,7 +49,7 @@ const validateForm = handleSubmit(
         email: email.value,
       });
 
-      router.push('/login');
+      router.push(`/confirmar?username=${encodeURIComponent(username.value)}&mail=${encodeURIComponent(email.value)}`);
       setTimeout(() => {
         toast.success('¡Cuenta creada correctamente!');
       }, 800);
@@ -64,6 +64,7 @@ const validateForm = handleSubmit(
 
         // Set the error message to show it to the user
         if (error.response?.data?.message == 'User already exists') {
+          errorsAxios.value = { api: 'El nombre de usuario ya esta siendo utilizado' }
           errorsAxios.value = { api: 'El nombre de usuario ya esta siendo utilizado' }
         } else {
           errorsAxios.value = { api: error.response?.data?.message || error.message };

@@ -7,6 +7,9 @@ import RegisterView from '../views/RegisterView.vue'
 import GenerarView from '../views/GenerarView.vue'
 import { computed } from 'vue';
 import { useUserStore } from '@/stores/counter';
+import ConfirmarView from '@/views/ConfirmarView.vue'
+import ForgotView from '@/views/ForgotView.vue'
+import ResetView from '@/views/ResetView.vue'
 
 const base = import.meta.env.BASE_URL
 
@@ -35,6 +38,21 @@ const router = createRouter({
       path:'/register',
       name:'register',
       component: RegisterView
+    },
+    {
+      path:'/confirmar',
+      name:'confirmar',
+      component: ConfirmarView
+    },
+    {
+      path:'/forgot',
+      name:'forgot',
+      component: ForgotView
+    },
+    {
+      path:'/reset',
+      name:'reset',
+      component: ResetView
     },
     {
       path:'/converter',
