@@ -19,9 +19,6 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
     },
     {
@@ -69,13 +66,12 @@ const router = createRouter({
       redirect:'/login'
     },
     {
-      path: '/:catchAll(.*)', // Catch all unmatched routes
+      path: '/:catchAll(.*)',
       redirect: '/login'
     }
   ]
 })
 
-// Navigation guard
 
 router.beforeEach(async (to, from, next) => {
   if (to.path !== '/login' && to.path != '/register' &&  to.path != '/confirmar' &&  to.path != '/reset' && to.path != '/forgot' ) {
@@ -89,32 +85,10 @@ router.beforeEach(async (to, from, next) => {
     {
       next()
     }
-    /*
-    console.log(storedUsername.value)
-    const sessionActive = await checkSession();
-    console.log(sessionActive);
-    try {
-      if (!sessionActive) {
-        console.error('La sesion no esta ok')
-        next('/login')
-      }
-      else {
-        console.log('Sesion ok! ;)');
-        next();
-      }
-    } catch (e) {
-      console.error(e);
-      next('/login')
-    }
-    finally {
-
-      store.dispatch('stopLoading');
-    }
-      */
   }
   else {
     next();
-   // store.dispatch('stopLoading');
+  
   }
 
 }

@@ -20,11 +20,9 @@ const { values, errors, handleSubmit, defineField, setFieldTouched } = useForm({
   })
 });
 
-
 const [confirmationCode, confirmationCodeAttrs] = defineField('confirmationCode');
 
 const errorsValidation = ref<string>('');
-
 
 var formSended = false;
 const valid = ref(false);
@@ -42,7 +40,7 @@ const validateForm = handleSubmit(
     try {
       const respuesta = await axios.post(
         `https://cognito-idp.us-east-1.amazonaws.com/`,
-        input, // Enviar los datos como string JSON
+        input,
         {
           headers: {
             'X-Amz-Target': 'AWSCognitoIdentityProviderService.ConfirmSignUp',
@@ -54,17 +52,14 @@ const validateForm = handleSubmit(
         toast.success('Usuario confirmado con exito');
       }, 800);
       router.push('/login')
-      // Manejar éxito (redirigir a inicio de sesión, etc.)
     } catch (error) {
       console.error(error)
       console.error('Error al confirmar el registro:', error.response ? error.response.data : error.message);
       toast.error(error.response.data.message)
-      // Manejar error (mostrar mensaje de error)
     }
 
   },
   ({ errors }) => {
-    // Handle validation errors from the schema
     if (errors instanceof yup.ValidationError) {
       errorsValidation.value = errors.inner.reduce((acc: any, error: yup.ValidationError) => {
         acc[error.path!] = error.message;

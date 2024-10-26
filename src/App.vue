@@ -67,27 +67,24 @@ async function fetchSongMidi(object_key: string, UserId: string) {
         'Content-Type': 'application/json'
       }
     });
-
-    // Ensure the response type is handled as a binary stream
-    // Convert ArrayBuffer to Blob
     console.log(response.data)
     return response.data
 
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       toast.error('No se pudo obtener la canción')
-      // The error is an AxiosError
-      console.error('Error Response Data:', error.response?.data);
-      console.error('Error Response Status:', error.response?.status);
-      console.error('Error Response Headers:', error.response?.headers);
+
+      console.error('Error en el Response Data:', error.response?.data);
+      console.error('Error en el Response Status:', error.response?.status);
+      console.error('Error en los Response Headers:', error.response?.headers);
     } else if (error instanceof Error) {
-      // The error is a standard Error
+
       toast.error(error.message)
-      console.error('Error Message:', error.message);
+      console.error('Error:', error.message);
     } else {
-      // Handle unknown error types
+
       toast.error(error)
-      console.error('An unknown error occurred:', error);
+      console.error('Un error desconocido ha ocurrido:', error);
     }
     console.error('Error Config:', (error as AxiosError).config);
   }
@@ -104,7 +101,7 @@ function blobToBase64(blob: Blob): Promise<string> {
     };
 
     reader.onerror = () => {
-      reject(new Error('Failed to convert Blob to base64'));
+      reject(new Error('No se pudo convertir de blob a base64'));
     };
 
     reader.readAsDataURL(blob); // Read the Blob as a Data URL

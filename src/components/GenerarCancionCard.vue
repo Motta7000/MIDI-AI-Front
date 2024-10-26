@@ -12,7 +12,6 @@ const userStore = useUserStore();
 const { values, errors, handleSubmit, defineField } =
     useForm({
         validationSchema: yup.object({
-            // usuario: yup.string().eusuario().required(),
             bpm: yup.number()
                 .nullable()
                 .transform((value, originalValue) => originalValue.trim() === '' ? null : value)
@@ -58,8 +57,8 @@ const onSubmit = handleSubmit(
                 bpm: bpmInput
             })
             const loadingToastId = toast.loading('Generando Canción...', {
-                autoClose: false, // Prevent it from closing automatically
-                closeOnClick: false, // Don't allow users to close it
+                autoClose: false,
+                closeOnClick: false,
             });
             const response = await axios.post(`${VITE_AWS3}/generateSong`, {
                 UserId: userStore.getUsername(),
@@ -75,31 +74,27 @@ const onSubmit = handleSubmit(
             await new Promise(resolve => setTimeout(resolve, seconds));
             toast.remove(loadingToastId);
             toast.success(response.data.message);
-            // Navigate after successful submission
 
         } catch (error: unknown) {
             toast.remove();
-            console.error('Error details:', error);
+            console.error('Error:', error);
 
             if (axios.isAxiosError(error)) {
-                // The error is an AxiosError
                 console.error('Response data:', error.response?.data);
                 console.error('Response status:', error.response?.status);
                 console.error('Response headers:', error.response?.headers);
-                toast.error(`Error: ${error.response?.data.message || 'Something went wrong'}`);
+                toast.error(`Error: ${error.response?.data.message || 'Algo salió mal'}`);
             } else if (error instanceof Error) {
-                // The error is a standard Error
                 console.error('Error message:', error.message);
                 toast.error(`Error: ${error.message}`);
             } else {
-                // Handle unknown error types
-                console.error('An unknown error occurred:', error);
-                toast.error('An unknown error occurred');
+                console.error('Error desconocido:', error);
+                toast.error('Error desconocido');
             }
         }
     },
     ({ errors }) => {
-        console.log('Validation errors:', errors);
+        console.log('Error de validación:', errors);
         const errorMessages = Object.values(errors).join(', ');
         toast.error(errorMessages);
     }

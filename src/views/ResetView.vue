@@ -53,8 +53,9 @@ const validateForm = handleSubmit(async (values) => {
         },
       }
     );
+    console.log(respuesta)
     setTimeout(() => {
-      toast.success('Contraseña cambiada exitosamente!', {
+      toast.success('¡Contraseña cambiada exitosamente!', {
         "autoClose": 3000,
       });
     }, 800);

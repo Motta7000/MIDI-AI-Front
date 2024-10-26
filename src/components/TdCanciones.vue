@@ -24,26 +24,19 @@ const emit = defineEmits<{
     (e: 'reFetchSongs'): void;
 }>();
 
-// Reactive reference for controlling the dialog
 const dialog = ref(false);
 
-// Function to delete a record, opens the dialog first
 async function openDeleteWindow() {
-    dialog.value = true;  // Show the dialog when the icon is clicked
+    dialog.value = true;
 }
-
-
 
 async function deleteSong() {
     type ToastId = string | number;
     const loadingToastId = ref<ToastId | null>(null);
 
-
     try {
-        // Show a loading toast
-        loadingToastId.value = toast.loading('Deleting song...', {
+        loadingToastId.value = toast.loading('Borrando Canción...', {
         });
-
         console.log('Eliminando canción');
         console.log({
             UserId: userStore.getUsername(),
@@ -57,27 +50,22 @@ async function deleteSong() {
             },
         });
 
-        // Dismiss the loading toast
         toast.remove(loadingToastId.value);
 
-        // Show a success toast
         toast.success('Canción eliminada correctamente');
 
-        // Emit event to re-fetch songs
         emit('reFetchSongs');
     } catch (error) {
-        // Dismiss the loading toast
         if (loadingToastId.value) {
             toast.remove(loadingToastId.value);
         }
 
-        // Show an error toast
         if (axios.isAxiosError(error)) {
-            toast.error(`Failed to delete song: ${error.response?.data.message || 'Unknown error'}`);
+            toast.error(`No se pudo borrar la canción: ${error.response?.data.message || 'Error desconocido'}`);
         } else if (error instanceof Error) {
-            toast.error(`Failed to delete song: ${error.message}`);
+            toast.error(`No se pudo borrar la canción: ${error.message}`);
         } else {
-            toast.error('An unknown error occurred');
+            toast.error('Error desconocido');
         }
 
         console.error('Error:', error);
@@ -99,21 +87,18 @@ async function deleteSong() {
         <td class="td-icon">
             <Icon class="icon" @click="emit('downloadSong', props.song.S3Id);" icon="material-symbols:download"
                 width="25" height="25" />
-            <!-- Trigger the delete confirmation dialog on click -->
             <Icon class="icon" @click="openDeleteWindow()" icon="material-symbols:delete-outline" width="25"
                 height="25" />
         </td>
     </tr>
 
-    <!-- Confirmation dialog -->
     <v-dialog v-model="dialog" max-width="500px">
         <v-card>
             <v-card-title class="headline">Eliminar "{{ props.song?.title }}"</v-card-title>
             <v-card-text>¿Estas Seguro que deseas eliminar esta canción?</v-card-text>
             <v-card-actions>
                 <v-btn color="red darken-1" text @click="dialog = false">Cancelar</v-btn>
-                <v-btn color="green darken-1" text
-                    @click="dialog = false; deleteSong() /* Call your delete function here */">Si</v-btn>
+                <v-btn color="green darken-1" text @click="dialog = false; deleteSong()">Si</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>

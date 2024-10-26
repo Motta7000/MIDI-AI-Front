@@ -6,10 +6,9 @@ import ModalGenerarCancion from '../components/GenerarCancionCard.vue';
 import Loading from '@/components/Loading.vue';
 
 const search = ref<string | null>(null);
-const rawGenres = ref<any[]>([]); // Store genres from API
+const rawGenres = ref<any[]>([]);
 const loading = ref<boolean>(true)
 
-// Fetch genres from API
 const fetchGenres = async () => {
   try {
     const response = await axios.get('https://groljy9hi7.execute-api.us-east-1.amazonaws.com/getGenres');
@@ -23,7 +22,6 @@ const fetchGenres = async () => {
   }
 };
 
-// Automatically fetch genres when the component is mounted
 onMounted(() => {
   fetchGenres();
 });

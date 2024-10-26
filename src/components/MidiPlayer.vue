@@ -28,14 +28,13 @@ const loadAndPlayMidi = async () => {
   if (player.value && player.value.isPlaying()) {
     try {
       player.value.stop();
-      console.log('Previous song stopped');
+      console.log('Se pauso la canción anterior');
     } catch (error) {
-      console.error('Error stopping previous song:', error);
+      console.error('Error frenando la canción anterior:', error);
     }
   }
   player.value = null;
   player.value = new MidiPlayer.Player((event: object) => {
-    // Log MIDI events
     console.log(event);
   });
   //soundFont.value = await Soundfont.instrument(audioContext, 'electric_guitar_jazz');
@@ -46,14 +45,13 @@ const loadAndPlayMidi = async () => {
 
       soundFont.value?.play(event.noteNumber, audioContext.currentTime, { duration: event.deltaTime / 1000, gain: props.volume });
     } else if (event.name === 'Note off' || (event.name === 'Note on' && event.velocity === 0)) {
-      // Handle Note off events or Note on events with velocity 0
-      // You might want to stop the note here if your soundfont library supports it
+
     }
   });
   console.log(props.song.midi)
   player.value.loadDataUri(props.song.midi);
   player.value.play();
-  emits('playerReady', player.value); // Emit playerReady event
+  emits('playerReady', player.value);
   const duration = player.value?.getSongTime() || 0;
   console.log(duration)
   emits('updateDuration', duration);
@@ -104,8 +102,8 @@ watch(() => props.seekTo, (newValue) => {
   }
 });
 
-const midiFileUrl = 'public/midi/Oppressed.mid'; // Replace with your MIDI file URL
-const soundFontName = 'electric_piano_1'; // Replace with your SoundFont name
+const midiFileUrl = 'public/midi/Oppressed.mid';
+const soundFontName = 'electric_piano_1';
 
 onMounted(() => {
   if (player.value) player.value.stop();
@@ -115,7 +113,6 @@ onMounted(() => {
 
 <template>
   <div class="hello">
-    <!-- Child component template content -->
   </div>
 </template>
 

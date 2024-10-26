@@ -56,15 +56,12 @@ const validateForm = handleSubmit(
       console.log(username.value, password.value, repeatPassword.value);
 
     } catch (error) {
-      // Handle axios errors here
       toast.remove(loadingId.value)
 
       if (axios.isAxiosError(error)) {
         console.error('API request failed:', error.response?.data?.message || error.message);
 
-        // Set the error message to show it to the user
         if (error.response?.data?.message == 'User already exists') {
-          errorsAxios.value = { api: 'El nombre de usuario ya esta siendo utilizado' }
           errorsAxios.value = { api: 'El nombre de usuario ya esta siendo utilizado' }
         } else {
           errorsAxios.value = { api: error.response?.data?.message || error.message };
@@ -78,7 +75,6 @@ const validateForm = handleSubmit(
     }
   },
   ({ errors }) => {
-    // Handle validation errors from the schema
     if (errors instanceof yup.ValidationError) {
       errorsValidation.value = errors.inner.reduce((acc: any, error: yup.ValidationError) => {
         acc[error.path!] = error.message;

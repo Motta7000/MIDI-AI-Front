@@ -34,22 +34,19 @@ var loadingId = ref<number>();
 const validateForm = async () => {
   try {
     loadingId.value = toast.loading('Cargando...')
-    // Validate the form input using the schema
     await schema.validate({ username: username.value, password: password.value }, { abortEarly: false });
     errors.value = {};
 
-    // Send a POST request to the API for user authentication
     const response = await axios.post(`${import.meta.env.VITE_AWS2}/user`, {
       username: username.value,
       password: password.value
     });
 
-    // If the response is successful, save the username and navigate to the canciones page
     if (response.status === 200) {
       setTimeout(() => {
         toast.success('¡Sesión iniciada correctamente!');
       }, 800);
-      userStore.setUsername(username.value); // Save the username in the store
+      userStore.setUsername(username.value);
       router.push('/canciones');
 
     }
@@ -58,7 +55,6 @@ const validateForm = async () => {
     }
   } catch (err) {
     toast.remove(loadingId.value)
-    // Handle validation errors from the schema
     if (err instanceof yup.ValidationError) {
       errors.value = err.inner.reduce((acc: any, error: yup.ValidationError) => {
         acc[error.path!] = error.message;
@@ -66,11 +62,9 @@ const validateForm = async () => {
       }, {});
     }
 
-    // Handle errors from the API
     if (axios.isAxiosError(err)) {
       console.error('Login failed:', err.response?.data.message || err.message);
 
-      // Show the error message to the user, e.g., setting an `apiError` variable
       errors.value = { api: err.response?.data.message || err.message };
     }
   }

@@ -20,11 +20,9 @@ const { values, errors, handleSubmit, defineField, setFieldTouched } = useForm({
   })
 });
 
-
 const [username, usernameAttrs] = defineField('username');
 
 const errorsValidation = ref<string>('');
-
 
 var formSended = false;
 const valid = ref(false);
@@ -53,16 +51,13 @@ const validateForm = handleSubmit(
           "autoClose": 15000, // Tiempo en milisegundos antes de que se cierre automáticamente
         });
       }, 800);
-
       router.push(`/reset?username=${encodeURIComponent(username.value)}`);
-      // Aquí puedes redirigir al usuario a la página donde ingresa el código
     } catch (error) {
       console.error('Error al iniciar el restablecimiento:', error.response ? error.response.data : error.message);
     }
 
   },
   ({ errors }) => {
-    // Handle validation errors from the schema
     if (errors instanceof yup.ValidationError) {
       errorsValidation.value = errors.inner.reduce((acc: any, error: yup.ValidationError) => {
         acc[error.path!] = error.message;
