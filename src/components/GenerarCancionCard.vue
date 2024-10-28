@@ -18,10 +18,10 @@ const { values, errors, handleSubmit, defineField } =
                 .typeError("Ingresar un número")
                 .moreThan(0, 'El número debe ser mayor que 0'),
             title: yup.string()
-                .required('El nombre del archivo es obligatorio')
-                .max(255, 'El nombre del archivo no puede exceder los 255 caracteres') // Límite común en muchos sistemas de archivos
-                .matches(/^[^\\/:*?"<>|]+$/, 'El nombre del archivo contiene caracteres no válidos')
-                .test('sin-espacios-puntos-finales', 'El nombre del archivo no puede terminar con espacios o puntos', (value) => {
+                .required('El título')
+                .max(255, 'El nombre del título no puede exceder los 255 caracteres') // Límite común en muchos sistemas de archivos
+                .matches(/^[^\\/:*?"<>|]+$/, 'El nombre del título contiene caracteres no válidos')
+                .test('sin-espacios-puntos-finales', 'El nombre del título no puede terminar con espacios o puntos', (value) => {
                     return value ? !/[. ]$/.test(value) : true;
                 })
         })
@@ -43,6 +43,7 @@ const emit = defineEmits<{
 
 }>();
 const dialogVisible = ref(false)
+var loadingToastId = null;
 const onSubmit = handleSubmit(
     async values => {
         try {
@@ -56,7 +57,7 @@ const onSubmit = handleSubmit(
                 genre: props.genre.GenreTitle.replace(/\s+/g, '-'),
                 bpm: bpmInput
             })
-            const loadingToastId = toast.loading('Generando Canción...', {
+            loadingToastId = toast.loading('Generando Canción...', {
                 autoClose: false,
                 closeOnClick: false,
             });
@@ -76,20 +77,22 @@ const onSubmit = handleSubmit(
             toast.success(response.data.message);
 
         } catch (error: unknown) {
-            toast.remove();
+            toast.remove(loadingToastId);
             console.error('Error:', error);
-
+            seconds = seconds * 1000
+            await new Promise(resolve => setTimeout(resolve, seconds));
+            toast.error('No se pudo generar la canción')
             if (axios.isAxiosError(error)) {
                 console.error('Response data:', error.response?.data);
                 console.error('Response status:', error.response?.status);
                 console.error('Response headers:', error.response?.headers);
-                toast.error(`Error: ${error.response?.data.message || 'Algo salió mal'}`);
+
             } else if (error instanceof Error) {
                 console.error('Error message:', error.message);
-                toast.error(`Error: ${error.message}`);
+
             } else {
                 console.error('Error desconocido:', error);
-                toast.error('Error desconocido');
+
             }
         }
     },
@@ -107,7 +110,7 @@ const onSubmit = handleSubmit(
                 {{ props.genre.GenreTitle }}
             </v-card-title>
             <v-card-subtitle>
-                Mas de 1000 archivos midi
+
             </v-card-subtitle>
         </v-card-item>
         <v-card-text>
@@ -122,11 +125,13 @@ const onSubmit = handleSubmit(
                 Generar Cancion de {{ props.genre.GenreTitle }}
             </v-card-title>
             <v-col class="v-col pt-5" cols="12" md="8" sm="6">
-                <v-text-field class="v-text-field" v-model="title" label="Título" hide-details required></v-text-field>
+                <v-text-field class="v-text-field" v-model="title" label="Título de la canción" hide-details
+                    required></v-text-field>
                 <v-card-text class="error-text">{{ errors.title }} </v-card-text>
             </v-col>
             <v-col class="v-col pt-5" cols="12" md="8" sm="6">
-                <v-text-field class="v-text-field" v-model="bpm" label="BPM" hide-details required></v-text-field>
+                <v-text-field @keyup.enter="onSubmit" class="v-text-field" v-model="bpm"
+                    label="BPM (Número entre 150 y 300)" hide-details required></v-text-field>
                 <v-card-text class="error-text">{{ errors.bpm }} </v-card-text>
             </v-col>
             <v-card-actions>

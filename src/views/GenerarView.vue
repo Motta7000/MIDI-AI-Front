@@ -43,7 +43,7 @@ const emit = defineEmits<{}>();
   <div class="canciones">
     <div class="flex-title py-5">
       <p>
-        <RouterLink to="/canciones">Canciones</RouterLink> -> Generar Cancion
+        <RouterLink to="/canciones">Mis Canciones</RouterLink> -> Generar Cancion
       </p>
       <h1 class="h1">Generar Cancion</h1>
       <h1 class="h1"></h1>

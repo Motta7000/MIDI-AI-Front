@@ -101,11 +101,11 @@ async function confirmarRegistro() {
                   autocomplete="off" @blur="setFieldTouched('codigoConfirmacion', true)" />
               </v-row>
               <v-row cols="12" md="4">
-                <span v-if="errors.confirmationCode" class="mensaje-error">{{ errors.confirmationCode }}</span>
+                <span v-if="errors.confirmationCode" class="error-message">{{ errors.confirmationCode }}</span>
               </v-row>
 
               <v-row cols="12" md="4">
-                <span v-if="erroresAxios" class="mensaje-error">{{ erroresAxios.api }}</span>
+                <span v-if="erroresAxios" class="error-message">{{ erroresAxios.api }}</span>
               </v-row>
               <v-row cols="12" md="4">
                 <v-btn class="mt-3" color="success" type="submit">Confirmar</v-btn>
@@ -121,6 +121,10 @@ async function confirmarRegistro() {
 
 
 <style scoped>
+.error-message {
+  color: rgb(255, 60, 60);
+}
+
 .mb-1 {
   margin-bottom: 0.2rem !important;
 }
