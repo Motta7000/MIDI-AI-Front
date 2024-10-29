@@ -19,7 +19,7 @@ const { values, errors, handleSubmit, defineField } =
                 .moreThan(0, 'El número debe ser mayor que 0'),
             title: yup.string()
                 .required('El título')
-                .max(255, 'El nombre del título no puede exceder los 255 caracteres') // Límite común en muchos sistemas de archivos
+                .max(255, 'El nombre del título no puede exceder los 255 caracteres')
                 .matches(/^[^\\/:*?"<>|]+$/, 'El nombre del título contiene caracteres no válidos')
                 .test('sin-espacios-puntos-finales', 'El nombre del título no puede terminar con espacios o puntos', (value) => {
                     return value ? !/[. ]$/.test(value) : true;

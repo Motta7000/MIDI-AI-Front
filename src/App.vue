@@ -31,11 +31,10 @@ const playSong = async (song: { S3Id: string, nombre: string, genero: string, te
   songData.value = song;
   if (song) {
     if (currentPlayingId.value === song.SongId && songIsPlaying.value) {
-      songIsPlaying.value = false;  // Pausa la cancion
+      songIsPlaying.value = false;
     } else if (currentPlayingId.value === song.SongId && !songIsPlaying.value) {
-      songIsPlaying.value = true;   // Inicia la cancion
+      songIsPlaying.value = true;
     } else {
-      // Comenzamos a reproducir la cancion
       currentPlayingId.value = song.SongId;
       songIsPlaying.value = true;
 
@@ -95,7 +94,6 @@ function blobToBase64(blob: Blob): Promise<string> {
     const reader = new FileReader();
 
     reader.onloadend = () => {
-      // The result contains the base64 string with the data URL prefix
       const base64String = (reader.result as string).split(',')[1];
       resolve(base64String);
     };
@@ -104,7 +102,7 @@ function blobToBase64(blob: Blob): Promise<string> {
       reject(new Error('No se pudo convertir de blob a base64'));
     };
 
-    reader.readAsDataURL(blob); // Read the Blob as a Data URL
+    reader.readAsDataURL(blob);
   });
 }
 

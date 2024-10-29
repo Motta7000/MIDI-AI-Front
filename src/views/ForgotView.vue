@@ -30,7 +30,7 @@ var loadingId = ref<number>();
 const validateForm = handleSubmit(
   async (values) => {
     const datos = {
-      ClientId: import.meta.env.VITE_CLIENT_ID, // Tu Client ID de Cognito
+      ClientId: import.meta.env.VITE_CLIENT_ID,
       Username: values.username,
     };
 
@@ -48,7 +48,7 @@ const validateForm = handleSubmit(
       console.log(respuesta.data)
       setTimeout(() => {
         toast.info('Se envió el código de verificación al mail: ' + respuesta.data.CodeDeliveryDetails.Destination, {
-          "autoClose": 15000, // Tiempo en milisegundos antes de que se cierre automáticamente
+          "autoClose": 15000,
         });
       }, 800);
       router.push(`/reset?username=${encodeURIComponent(username.value)}`);

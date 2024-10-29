@@ -7,20 +7,18 @@ import router from '@/router';
 import { useUserStore } from '@/stores/counter'
 import { toast } from 'vue3-toastify';
 
-// Define YUP validation schema
 const show1 = ref(false)
 const schema = yup.object().shape({
   username: yup.string().required('Campo Obligatorio'),
   password: yup.string().required('Campo Obligatorio')
 });
 const userStore = useUserStore();
-// Form data
+
 const username = ref('');
 const password = ref('');
 const valid = ref(false);
 const errors = ref<{ username?: string; password?: string; api?: string }>({});
 
-// Define validation rules
 const usernameRules = [
   (v: any) => !!v || 'Username is required'
 ];
@@ -28,7 +26,6 @@ const passwordRules = [
   (v: any) => !!v || 'Password is required'
 ];
 
-// Validate form
 import axios from 'axios';
 var loadingId = ref<number>();
 const validateForm = async () => {

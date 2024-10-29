@@ -30,7 +30,7 @@ var loadingId = ref<number>();
 const validateForm = handleSubmit(
   async (values) => {
     const datos = {
-      ClientId: import.meta.env.VITE_CLIENT_ID, // Asegúrate de tener correctamente configurado el CLIENT_ID
+      ClientId: import.meta.env.VITE_CLIENT_ID,
       Username: route.query.username,
       ConfirmationCode: values.confirmationCode,
     };
