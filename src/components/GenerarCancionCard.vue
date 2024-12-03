@@ -81,7 +81,8 @@ const onSubmit = handleSubmit(
             console.error('Error:', error);
             seconds = seconds * 1000
             await new Promise(resolve => setTimeout(resolve, seconds));
-            toast.error('No se pudo generar la canción')
+            console.error('No se pudo generar la canción')
+            //toast.error('No se pudo generar la canción')
             if (axios.isAxiosError(error)) {
                 console.error('Response data:', error.response?.data);
                 console.error('Response status:', error.response?.status);
